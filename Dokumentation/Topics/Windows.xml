@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T15:31:01.497+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Windows</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Windows</para>
+    </header>
+    <para styleclass="Normal"></para>
+  </body>
+</topic>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:13:53.018+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Messages</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Messages</para>
+    </header>
+    <para styleclass="Normal"><text styleclass="Image Caption">No Main translation choosen:</text></para>
+    <para styleclass="Normal"><image src="No Maintranslation.png" imagestyleclass="Default" scale="100.00%" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">The textfeld of the bibleverses is empty:</text></para>
+    <para styleclass="Normal"><image src="No Bibleverses.png" imagestyleclass="Default" scale="75.00%" width="195" height="176" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">This bibleverses are not found:</text></para>
+    <para styleclass="Normal"><image src="Bibleverses not found01.png" imagestyleclass="Default" scale="75.00%" width="195" height="212" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal">In this example Matthew 1.1-25 are in the bible, but 26-27 are not.</para>
+    <para styleclass="Normal">All bibleverses not found are listed.</para>
+    <para styleclass="Normal">If you enter Matthew 1.1-60, it will show all missing verses from 26-60</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Bibleverses not found because space is missing between book number and book name:</text></para>
+    <para styleclass="Normal"><image src="Bibleverses not found03.png" imagestyleclass="Default" scale="75.00%" width="194" height="176" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Phil can refer to Philipians or Philemon, book name is not clearly given:</text></para>
+    <para styleclass="Normal"><image src="Bibleverses not found02.png" imagestyleclass="Default" scale="75.00%" width="379" height="174" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

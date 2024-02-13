@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:14:35.003+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Fonts</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Fonts</para>
+    </header>
+    <para styleclass="Normal">If the pdf document don&apos;t show the correct written characters of one language. Especially Tamil or other arabic, asian languages.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">This is the way to do it.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">We have to install one font, for this follow the following steps:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">1. Open the Windows Explorer and go in the folder C:\Bibletool\font</para>
+    <para styleclass="Normal"><image src="Windows font01.png" imagestyleclass="Default" scale="50.00%" width="462" height="186" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">2. The relevant files here are only far.ttf and fab.ttf:</para>
+    <para styleclass="Normal"><image src="Windows font02.png" imagestyleclass="Default" scale="50.00%" width="318" height="81" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+    <para styleclass="Normal">3. For each file do this:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">3.1 Open with a doubleclick the file far.ttf or fab.ttf</para>
+    <para styleclass="Normal"><image src="Windows font03.png" imagestyleclass="Default" scale="40.00%" width="572" height="300" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal">3.2 Click on Install</para>
+    <para styleclass="Normal"><image src="Windows font04.png" imagestyleclass="Default" scale="60.00%" width="154" height="83" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">4. After you installed both the far.ttf and fab.ttf you can ran the Bibletool again and it should show the font correctly</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

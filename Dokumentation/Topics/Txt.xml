@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:06:18.053+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>TXT</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">TXT</para>
+    </header>
+    <para styleclass="Normal">This folder saves all translation that were chosen in a text (.txt) files.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">This I implemented as a help to open txt files and copy the bibleverses as plain text in other programs.</para>
+    <para styleclass="Normal" style="page-break-before:always;">And if pdf don&apos;t show the font correctly this text file always do.</para>
+  </body>
+</topic>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:04:05.767+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Saved Preferences</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Saved Preferences</para>
+    </header>
+    <para styleclass="Normal">For more convienence or user friendliness. The selected Maintranslation, the checked translations, the All in one document, the Sermontitle and the name of Pastor are saved.</para>
+    <para styleclass="Normal">Everytime the program is used and ends by itself, it saves the preferences set and are saved for the next program call.</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T15:09:00.502+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Introduction</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Introduction</para>
+    </header>
+    <para styleclass="Normal">The bibletool is atranslation tool that helps churches with people of more than one language.</para>
+    <para styleclass="Normal">With entering book names and verses of one main language and choosing one or more language, the program will generate mainly pdf files for easy to use.</para>
+    <para styleclass="Normal">Text files .txt are provided in the txt folder for copying and pasting it somewher in a easy manner.</para>
+    <para styleclass="Normal">HTML files are saved for the program to generate the pdf, but they could be further used for web pages.</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

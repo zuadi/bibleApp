@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-07-31T22:45:50.373+02:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Select Main Translation</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Select Main Translation</para>
+    </header>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">Here you choose the main translation,</para>
+    <para styleclass="Normal">this needs to be the language the verse will be entered,</para>
+    <para styleclass="Normal">otherwise there will be a message the verses are not found.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><image src="Windows main translationpng.png" imagestyleclass="Default" scale="100.00%" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Language to be chosen are:</text></para>
+    <list id="0" type="ul" listtype="bullet" formatstring="&#183;" format-charset="SYMBOL_CHARSET" levelreset="true" legalstyle="false" startfrom="1" styleclass="Normal" style="font-family:Symbol; font-size:10pt; color:#000000;">
+      <li styleclass="Normal">German ELB2006</li>
+      <li styleclass="Normal">English NKJV</li>
+      <li styleclass="Normal">Arabic AVD</li>
+      <li styleclass="Normal">Albanian ALBB</li>
+      <li styleclass="Normal">Bulgarian BG1940</li>
+      <li styleclass="Normal">Chinese traditional CUV</li>
+      <li styleclass="Normal">Chinese simplified CUVS</li>
+      <li styleclass="Normal">Croatian KS</li>
+      <li styleclass="Normal">Czech CSP</li>
+      <li styleclass="Normal">Danish DAN</li>
+      <li styleclass="Normal">Dutch HSV</li>
+      <li styleclass="Normal">Dutch NBG</li>
+      <li styleclass="Normal">Finnish FIK1938</li>
+      <li styleclass="Normal">French LSG</li>
+      <li styleclass="Normal">German Schlachter 2000</li>
+      <li styleclass="Normal">Greek TGVD;Hebrew MHB</li>
+      <li styleclass="Normal">Hindi HIND</li>
+      <li styleclass="Normal">Hungarian RUF</li>
+      <li styleclass="Normal">Icelandic ISL&apos;07</li>
+      <li styleclass="Normal">Indonesian VMD</li>
+      <li styleclass="Normal">Italian NR 94</li>
+      <li styleclass="Normal">Japanese JSS</li>
+      <li styleclass="Normal">Korean KRV</li>
+      <li styleclass="Normal">Macedonian BK99</li>
+      <li styleclass="Normal">Nigerian Haussa</li>
+      <li styleclass="Normal">Nigerian Igbob</li>
+      <li styleclass="Normal">Nigerian Yorùbá</li>
+      <li styleclass="Normal">Norwegian DNB</li>
+      <li styleclass="Normal">Persian FANMV</li>
+      <li styleclass="Normal">Polish BWP;Portugies ARC09</li>
+      <li styleclass="Normal">Rumanian NTR2006;Russian RST</li>
+      <li styleclass="Normal">Slovanian SEB08</li>
+      <li styleclass="Normal">Serbian SDK</li>
+      <li styleclass="Normal">Spanish RVR1960</li>
+      <li styleclass="Normal">Swahili SUV</li>
+      <li styleclass="Normal">Swedish SFB</li>
+      <li styleclass="Normal">Tagalog TAGAB82</li>
+      <li styleclass="Normal">Thai THSV 71</li>
+      <li styleclass="Normal">Turkish TUR</li>
+      <li styleclass="Normal">Tamil TBSI</li>
+      <li styleclass="Normal">Ukrainian GYZ</li>
+      <li styleclass="Normal">Vietnamese NVB</li>
+    </list>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-style:italic;">German and English are in first position because it was more convenient for me.</text></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

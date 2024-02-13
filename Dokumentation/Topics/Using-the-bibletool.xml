@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T13:38:23.896+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Using the bibletool</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Using the bibletool</para>
+    </header>
+    <para styleclass="Normal">This app is very simple to use, so it is explained in this next easy steps:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">Main windows</para>
+    <para styleclass="Normal"><image src="Windows main window.png" imagestyleclass="Default" scale="60.00%" width="390" height="460" styleclass="Image Caption" figurelistinclude="0"></image></para>
+  </body>
+</topic>

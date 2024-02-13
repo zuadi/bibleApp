@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:01:46.982+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Select translation</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Select translation</para>
+    </header>
+    <para styleclass="Normal">Here you can check all translations that you need.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><image src="Windows select translation.png" imagestyleclass="Default" scale="100.00%" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Select all</text></para>
+    <para styleclass="Normal">With &quot;Select all&quot; you can either select all translation or unselect all selected translation at once.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Translations</text></para>
+    <para styleclass="Normal">All checked translations are generated, if there is none selected only the Main Translation is generated.</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

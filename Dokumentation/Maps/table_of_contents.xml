@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XInclude">
+  <topicref type="topic" id="449836982248689" build="ALL" modified="2023-02-26T13:16:18.099Z" icon="0" href="Introduction">
+    <caption translate="true">Introduction</caption>
+  </topicref>
+  <topicref type="topic" id="44984861664662" build="ALL" modified="2023-02-26T13:21:30.665Z" icon="0" href="Chapter-2">
+    <caption translate="true">Installation</caption>
+    <topicref type="topic" id="449837337752755" build="ALL" modified="2023-02-26T13:22:09.579Z" icon="0" href="Overview2">
+      <caption translate="true">Overview</caption>
+    </topicref>
+    <topicref type="topic" id="449836603642978" build="ALL" modified="2023-02-26T13:21:45.172Z" icon="0" href="Overview">
+      <caption translate="true">Windows</caption>
+    </topicref>
+    <topicref type="topic" id="449836226847036" build="ALL" modified="2023-02-26T15:34:27.288Z" icon="0" href="Mac-OS">
+      <caption translate="true">Mac OS</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="449835740247898" build="ALL" modified="2023-02-26T13:35:48.012Z" icon="0" href="Using-the-bibletool">
+    <caption translate="true">Using the bibletool</caption>
+    <topicref type="topic" id="449837785548861" build="ALL" modified="2023-02-26T13:50:44.985Z" icon="0" href="Choosing-the-main-transalation">
+      <caption translate="true">Select Main Translation</caption>
+    </topicref>
+    <topicref type="topic" id="449837079134738" build="ALL" modified="2023-02-26T13:50:22.782Z" icon="0" href="Select-translation">
+      <caption translate="true">Select translation</caption>
+    </topicref>
+    <topicref type="topic" id="449837265286658" build="ALL" modified="2023-02-26T15:27:25.074Z" icon="0" href="Bibleverses">
+      <caption translate="true">Bibleverses</caption>
+    </topicref>
+    <topicref type="topic" id="449835970803644" build="ALL" modified="2023-02-26T14:02:03.861Z" icon="0" href="Additional-settings">
+      <caption translate="true">Additional settings</caption>
+    </topicref>
+    <topicref type="topic" id="449834278498777" build="ALL" modified="2023-02-26T13:56:13.760Z" icon="0" href="Saved-Preferences">
+      <caption translate="true">Saved Preferences</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="449835145525001" build="ALL" modified="2023-02-26T16:00:38.818Z" icon="0" href="Messages">
+    <caption translate="true">Messages</caption>
+  </topicref>
+  <topicref type="topic" id="449837205785947" build="ALL" modified="2023-02-26T15:27:37.175Z" icon="0" href="Output-files">
+    <caption translate="true">Output files</caption>
+    <topicref type="topic" id="449834508374729" build="ALL" modified="2023-02-26T15:28:06.419Z" icon="0" href="Output-folder">
+      <caption translate="true">Output folder</caption>
+    </topicref>
+    <topicref type="topic" id="449837970171820" build="ALL" modified="2023-02-26T15:33:28.141Z" icon="0" href="Html">
+      <caption translate="true">HTML</caption>
+    </topicref>
+    <topicref type="topic" id="449835040313569" build="ALL" modified="2023-02-26T15:33:24.319Z" icon="0" href="Pdf">
+      <caption translate="true">PDF</caption>
+    </topicref>
+    <topicref type="topic" id="449835483937895" build="ALL" modified="2023-02-26T15:33:19.665Z" icon="0" href="Txt">
+      <caption translate="true">TXT</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="449834808458055" build="ALL" modified="2023-02-26T15:30:48.544Z" icon="0" href="Toubleshooting">
+    <caption translate="true">Toubleshooting</caption>
+    <topicref type="topic" id="449837462500715" build="ALL" modified="2023-02-26T15:30:57.423Z" icon="0" href="Windows">
+      <caption translate="true">Windows</caption>
+      <topicref type="topic" id="449836091568461" build="ALL" modified="2023-02-26T15:31:35.160Z" icon="0" href="Fonts">
+        <caption translate="true">Fonts</caption>
+      </topicref>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="44985419709590" build="ALL" modified="2023-02-26T16:02:15.811Z" icon="0" href="Need-help">
+    <caption translate="true">Need help?</caption>
+  </topicref>
+</map>

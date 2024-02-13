@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-07-31T22:46:28.708+02:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Mac OS</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Mac OS</para>
+    </header>
+    <para styleclass="Normal">Follow this steps:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">1. Open Bibletool.dmg</para>
+    <para styleclass="Normal"><image src="Screenshot 2023-07-31 at 19.06.36.png" imagestyleclass="Default" scale="100.00%" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">2. Move Bibletool in Application folder</para>
+    <para styleclass="Normal"><image src="Screenshot 2023-07-31 at 19.06.57.png" imagestyleclass="Default" scale="80.00%" width="499" height="354" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">3. Remove Bibletool.dmg</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">4. Eject Bibletool drive</para>
+    <para styleclass="Normal"><image src="Screenshot 2023-07-31 at 19.08.11.png" imagestyleclass="Default" scale="80.00%" width="267" height="89" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

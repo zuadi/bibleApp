@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:05:36.505+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Additional settings</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Additional settings</para>
+    </header>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">Here are some additional setting that can be made:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><image src="Windows additional settings.png" imagestyleclass="Default" scale="50.00%" width="116" height="189" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">All in one document</text></para>
+    <para styleclass="Normal">This checkbox includes all the translation in one document &quot;Main Translation&quot;.</para>
+    <para styleclass="Normal">It will be printed verse after verse like it was entered in the bibleverse textbox.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">The first language is always the main translation followed by the other translations ordered alphabetically</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">The disadvantage is, if you don&apos;t know the language you don&apos;t know which language is which.</para>
+    <para styleclass="Normal">It was thought to work with two or three translation and not 30.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">This is an example:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><image src="Windows additional settings02.png" imagestyleclass="Default" scale="30.00%" width="339" height="253" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Sermontitle</text></para>
+    <para styleclass="Normal">This is the sermon title shown in the left top corner of the documents header</para>
+    <para styleclass="Normal"><image src="Sermontitle.png" imagestyleclass="Default" scale="40.00%" width="460" height="46" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Name of Pastor</text></para>
+    <para styleclass="Normal">This is the name of the Pastor/Preacher shown in the center of the documents footer</para>
+    <para styleclass="Normal"><image src="Pastersname.png" imagestyleclass="Default" scale="40.00%" width="464" height="24" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Translate</text></para>
+    <para styleclass="Normal">This starts the translation/generating of the files</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+    <para styleclass="Normal"></para>
+  </body>
+</topic>

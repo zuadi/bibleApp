@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T15:10:22.188+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Windows</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Windows</para>
+    </header>
+    <para styleclass="Normal" style="page-break-before:always;">Follow this steps:</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">1. Double click on the Bibletool Setup.exe</para>
+    <para styleclass="Normal"><image src="Windows Installation 01.png" imagestyleclass="Default" scale="100.00%" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">2. Choose if you want a shortcut on the Desktop and then click Next</para>
+    <para styleclass="Normal"><image src="Windows Installation 02.png" imagestyleclass="Default" scale="50.00%" width="302" height="234" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">3. Click Install</para>
+    <para styleclass="Normal"><image src="Windows Installation 03.png" imagestyleclass="Default" scale="50.00%" width="300" height="233" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">4. The bibletool is being installed</para>
+    <para styleclass="Normal"><image src="Windows Installation 04.png" imagestyleclass="Default" scale="50.00%" width="302" height="232" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">5. The installazion was succeesful you can check Lauch Bibletool and the program starts after you click on Finish</para>
+    <para styleclass="Normal"><image src="Windows Installation 05.png" imagestyleclass="Default" scale="50.00%" width="302" height="234" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+    <para styleclass="Normal"></para>
+  </body>
+</topic>

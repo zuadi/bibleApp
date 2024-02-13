@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T17:03:09.244+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Bibleverses</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Bibleverses</para>
+    </header>
+    <para styleclass="Normal"><text styleclass="Image Caption" style="font-weight:normal;">In this textfield you enter all bibleverses that you need:</text></para>
+    <para styleclass="Normal"><image src="Bibleverses.png" imagestyleclass="Default" scale="50.00%" width="322" height="182" styleclass="Image Caption" figurelistinclude="0"></image></para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">The way to enter the verses are usually a verse or couple of verses per line.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Examples</text></para>
+    <list id="0" type="ul" listtype="bullet" formatstring="&#183;" format-charset="SYMBOL_CHARSET" levelreset="true" legalstyle="false" startfrom="1" styleclass="Normal" style="font-family:Symbol; font-size:10pt; color:#000000;">
+      <li styleclass="Normal">Genesis 3.1-3</li>
+      <li styleclass="Normal">Exodus 2.2, 4.2-7, 10.1-10</li>
+      <li styleclass="Normal">Jn 3.16</li>
+      <li styleclass="Normal">1 Cor 13.10</li>
+      <li styleclass="Normal">Phil 10.10</li>
+    </list>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal"><text style="font-weight:bold;">Abbreviations</text></para>
+    <para styleclass="Normal">Abbreviations are the common ones in German English Dutch.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">If you use Joh for John or Mat for Matthew. Consider that you need three letters at least.For abbreviations it is an exceptions then Jn works for John.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">For books with numbers like 1 Corinthians, etc, important is that there is a space after the number and the first letter of the book.</para>
+    <para styleclass="Normal" style="page-break-before:always;"></para>
+  </body>
+</topic>

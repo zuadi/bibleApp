@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" modified="2023-02-26T16:02:15.821+01:00" lasteditedby="zuercher" version="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title>Need help?</title>
+  <body>
+    <header>
+      <para styleclass="Heading1">Need help?</para>
+    </header>
+    <para styleclass="Normal">This app is written by me only and is only used by our church in Switzerland.</para>
+    <para styleclass="Normal">So pardon me please, if there are still some bugs. We have used and tested it with the German and English translation as whole.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">But I am open for feedback, correction, improvements and any other concens.</para>
+    <para styleclass="Normal"></para>
+    <para styleclass="Normal">Feel free to write a email on: <link displaytype="text" defaultstyle="true" type="weblink" href="mailto:adi.zuercher87@gmail.com">adi.zuercher87@gmail.com</link></para>
+  </body>
+</topic>
