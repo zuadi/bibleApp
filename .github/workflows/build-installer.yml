@@ -47,13 +47,21 @@ jobs:
       ############################################
       # MACOS: Build .app bundle & .dmg
       ############################################
+      
       - name: Make macOS .app bundle
         if: runner.os == 'macOS'
         run: |
           mkdir -p Bibletool.app/Contents/MacOS
+          mkdir -p Bibletool.app/Contents/Resources
+      
+          # Copy Go binary
           cp bibletool Bibletool.app/Contents/MacOS/
           chmod +x Bibletool.app/Contents/MacOS/bibletool
-
+      
+          # 👉 Copy bibles + cfg files/folders
+          cp -R bibles Bibletool.app/Contents/Resources/
+          cp -R cfg Bibletool.app/Contents/Resources/
+      
       - name: Create DMG
         if: runner.os == 'macOS'
         run: |
@@ -82,3 +90,4 @@ jobs:
             bibletool
             Bibletool.app
             bibletool.dmg
+
