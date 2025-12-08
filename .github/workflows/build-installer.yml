@@ -1,4 +1,4 @@
-name: Build Go App and Installer
+name: Build Go App and Installers
 
 on:
   push:
@@ -7,7 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
 
     steps:
       - name: Checkout repository
@@ -19,23 +22,63 @@ jobs:
         with:
           go-version: "1.25"
 
-      # Build bibletool.exe
-      - name: Build Go exe
+      # Build binaries for each OS
+      - name: Build Go binary
         run: |
-          go build -ldflags "-H=windowsgui" -o bibletool.exe .
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            go build -ldflags "-H=windowsgui" -o bibletool.exe .
+          else
+            go build -o bibletool .
+          fi
+        shell: bash
 
-      # Install Inno Setup
+      ############################################
+      # WINDOWS: Build Inno Setup Installer
+      ############################################
       - name: Install Inno Setup
+        if: runner.os == 'Windows'
         run: choco install innosetup --yes
 
-      # Build Inno Setup installer
       - name: Build installer using ISS script
+        if: runner.os == 'Windows'
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "InnoSetupConfigFile.iss"
 
-      # Upload installer
-      - name: Upload installer
+      ############################################
+      # MACOS: Build .app bundle & .dmg
+      ############################################
+      - name: Make macOS .app bundle
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p Bibletool.app/Contents/MacOS
+          cp bibletool Bibletool.app/Contents/MacOS/
+          chmod +x Bibletool.app/Contents/MacOS/bibletool
+
+      - name: Create DMG
+        if: runner.os == 'macOS'
+        run: |
+          hdiutil create -volname "Bibletool" \
+            -srcfolder Bibletool.app \
+            -ov -format UDZO bibletool.dmg
+
+      ############################################
+      # Upload Artifacts for each OS
+      ############################################
+      - name: Upload Windows artifacts
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: BibletoolSetup
-          path: Output/*.exe
+          name: Windows-Bibletool
+          path: |
+            bibletool.exe
+            Output/*.exe
+
+      - name: Upload macOS artifacts
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-Bibletool
+          path: |
+            bibletool
+            Bibletool.app
+            bibletool.dmg
