@@ -22,7 +22,7 @@ jobs:
       # Build bibletool.exe
       - name: Build Go exe
         run: |
-          go build -o bibletool.exe .
+          go build -ldflags "-H=windowsgui" -o bibletool.exe .
 
       # Install Inno Setup
       - name: Install Inno Setup
@@ -37,5 +37,5 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: BibletoolInstaller
+          name: BibletoolSetup
           path: Output/*.exe
