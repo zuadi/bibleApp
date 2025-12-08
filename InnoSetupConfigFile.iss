@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Bibletool"
-#define MyAppVersion "1.5.1"
+#define MyAppVersion "1.5.2"
 #define MyAppPublisher "cfm Pottershouse"
 #define MyAppExeName "bibletool.exe"
 
@@ -14,17 +14,17 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName=C:\{#MyAppName}
+DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=C:\Users\zuercher\bibletool
+OutputDir=Output
 OutputBaseFilename=Bibletool Setup
-SetupIconFile=C:\Users\zuercher\bibletool\pics\pottershouse.ico
+SetupIconFile=.\pics\pottershouse.ico
 Compression=lzma
 SolidCompression=yes
-UninstallDisplayIcon=C:\Users\zuercher\bibletool\pics\pottershouse.ico
+UninstallDisplayIcon=.\pics\pottershouse.ico
 WizardStyle=modern
 
 [Languages]
@@ -34,13 +34,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\zuercher\bibletool\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\zuercher\bibletool\bibles\*"; DestDir: "{app}\bibles"; Flags: ignoreversion recursesubdirs
-Source: "C:\Users\zuercher\bibletool\cfg\*"; DestDir: "{app}\cfg"; Flags: ignoreversion recursesubdirs
-Source: "C:\Users\zuercher\bibletool\font\*"; DestDir: "{app}\font"; Flags: ignoreversion recursesubdirs
-Source: "C:\Users\zuercher\bibletool\pics\*"; DestDir: "{app}\pics"; Flags: ignoreversion  recursesubdirs
-Source: "C:\Users\zuercher\bibletool\wkhtmltopdf.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\zuercher\bibletool\Dokumentation\Bibletool User Manual.pdf"; DestDir: "{app}\hlp"; Flags: ignoreversion
+Source: ".\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bibles\*"; DestDir: "{app}\bibles"; Flags: ignoreversion recursesubdirs
+Source: ".\cfg\*"; DestDir: "{app}\cfg"; Flags: ignoreversion recursesubdirs
+Source: ".\font\*"; DestDir: "{app}\font"; Flags: ignoreversion recursesubdirs
+Source: ".\pics\*"; DestDir: "{app}\pics"; Flags: ignoreversion recursesubdirs
+Source: ".\wkhtmltopdf.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\doc\Bibletool User Manual.pdf"; DestDir: "{app}\hlp"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
