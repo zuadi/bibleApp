@@ -11,9 +11,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-      uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
-      # Install Go (Windows image has Go preinstalled, but we ensure version compatibility)
+      # Install Go
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
