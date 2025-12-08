@@ -1,0 +1,41 @@
+name: Build Go App and Installer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+      uses: actions/checkout@v4
+
+      # Install Go (Windows image has Go preinstalled, but we ensure version compatibility)
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      # Build bibletool.exe
+      - name: Build Go exe
+        run: |
+          go build -o bibletool.exe .
+
+      # Install Inno Setup
+      - name: Install Inno Setup
+        run: choco install innosetup --yes
+
+      # Build Inno Setup installer
+      - name: Build installer using ISS script
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" InnoSetupConfigFile.iss
+
+      # Upload installer
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: BibletoolInstaller
+          path: Output/*.exe
