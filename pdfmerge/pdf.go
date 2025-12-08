@@ -41,7 +41,7 @@ func getReader(rs io.ReadSeeker) (*pdf.PdfReader, error) {
 			return nil, err
 		}
 		if !auth {
-			return nil, errors.New("Cannot merge encrypted, password protected document")
+			return nil, errors.New("cannot merge encrypted, password protected document")
 		}
 	}
 
@@ -83,5 +83,5 @@ func addPdfPages(file *os.File, pages []int, c *creator.Creator) error {
 		}
 	}
 
-	return nil
+	return err
 }

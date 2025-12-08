@@ -1,4 +1,4 @@
-package Abbreviation
+package abbreviation
 
 import "strings"
 

@@ -2,7 +2,6 @@ package basic
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -43,7 +42,7 @@ func Settings() *OSPaths {
 func CreateTempdir() string {
 
 	//create temp folder
-	tempdir, err := ioutil.TempDir("", "")
+	tempdir, err := os.MkdirTemp("", "")
 	if err != nil {
 		CheckErr(err, "Error making temp dir")
 	}

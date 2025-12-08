@@ -110,7 +110,7 @@ func parsePageNums(pagesInput string) []int {
 	for _, e := range strings.Split(pagesInput, ",") {
 		pageNo, err := strconv.Atoi(strings.Trim(e, " \n"))
 		if err != nil {
-			fmt.Errorf("Invalid format! Example of a file input with page numbers: path/to/abc.pdf~1,2,3,5,6")
+			fmt.Printf("Invalid format! Example of a file input with page numbers: path/to/abc.pdf~1,2,3,5,6")
 			os.Exit(1)
 		}
 		pages = append(pages, pageNo)

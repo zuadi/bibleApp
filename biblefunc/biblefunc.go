@@ -1,9 +1,9 @@
 package biblefunc
 
 import (
-	"bibletool/Abbreviation"
-	"bibletool/Modules"
+	"bibletool/abbreviation"
 	"bibletool/basic"
+	"bibletool/modules"
 	"database/sql"
 	"fmt"
 	"regexp"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type VerseList []Modules.Bibleverses
+type VerseList []modules.Bibleverses
 
 var verselist VerseList
 
@@ -50,13 +50,13 @@ func Getbibleverses(inputtext string) *VerseList {
 			// trim return, whitespace and new line
 			item = strings.TrimSpace(item)
 
-			var tmp_list Modules.Bibleverses
+			var tmp_list modules.Bibleverses
 			//if item is empty string skip
 			if item == "" {
 				continue
 			} else if strings.Count(item, ".") == 0 && strings.Count(item, "-") == 0 {
 				// if no . or no - is found in item it is not recognized as a verse
-				var tmplst Modules.Bibleverses
+				var tmplst modules.Bibleverses
 				//add to slice for printing out not found bibleverses
 				tmplst.Book = append(tmplst.Book, strings.Join([]string{"- '", item, "' is not a valid Bibleverse"}, ""))
 				tmplst.Chapter = append(tmplst.Chapter, "0")
@@ -126,7 +126,7 @@ func Getbibleverses(inputtext string) *VerseList {
 				startvalue, err2 := strconv.Atoi(trim_leftside)
 				switch {
 				case startvalue > rightside:
-					var tmplst Modules.Bibleverses
+					var tmplst modules.Bibleverses
 					//add to slice for printing out not found bibleverses
 					tmplst.Book = append(tmplst.Book, strings.Join([]string{"- '", item, "' is not a valid Bibleverse"}, ""))
 					tmplst.Chapter = append(tmplst.Chapter, "0")
@@ -185,10 +185,10 @@ func Getbibleverses(inputtext string) *VerseList {
 	return &verselist
 }
 
-func (in_list *VerseList) Check_verses(main_selectindex int, data [][]string) Modules.Checkverse {
+func (in_list *VerseList) Check_verses(main_selectindex int, data [][]string) modules.Checkverse {
 	// This function checks if the entered verses are in the main translation bible, gives out a list of not found verses and, gives out a slice with
 	// all found bibleverses of maintext and index of the config file to find translation text in csv
-	var Checkstruct Modules.Checkverse
+	var Checkstruct modules.Checkverse
 
 	// insert first empty line to not found slice
 	Checkstruct.Notfoundlist = append(Checkstruct.VersList, []string{"\n"})
@@ -241,7 +241,7 @@ func (in_list *VerseList) Check_verses(main_selectindex int, data [][]string) Mo
 							tmp_chapter = strings.TrimSpace(tmp)
 						}
 						// replace short names with real names
-						verscompilation.Book[i] = Abbreviation.Replace(verscompilation.Book[i])
+						verscompilation.Book[i] = abbreviation.Replace(verscompilation.Book[i])
 						if strings.Contains(strings.ToLower(item), strings.ToLower(verscompilation.Book[i])) && tmp_chapter == strings.TrimSpace(verscompilation.Chapter[i]) && tmp_vers == strings.TrimSpace(verscompilation.Verse[i]) && strings.ToLower(string(item[0])) == strings.ToLower(string(verscompilation.Book[i][0])) {
 							not_found = false
 
@@ -303,7 +303,7 @@ func (in_list *VerseList) Check_verses(main_selectindex int, data [][]string) Mo
 	return Checkstruct
 }
 
-func GetVersText(filepath string, input Modules.Checkverse) (output_text Modules.OutputText) {
+func GetVersText(filepath string, input modules.Checkverse) (output_text modules.OutputText) {
 	var lst_books []struct {
 		Name   string
 		Number int
@@ -426,7 +426,7 @@ func GetVersText(filepath string, input Modules.Checkverse) (output_text Modules
 	return output_text
 }
 
-func GetTranslationVerses(input Modules.Checkverse, tranls_selection string, data [][]string) (outtext Modules.Checkverse) {
+func GetTranslationVerses(input modules.Checkverse, tranls_selection string, data [][]string) (outtext modules.Checkverse) {
 	var translation_column = -1
 
 	//iterate over biblevers compilation

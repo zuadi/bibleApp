@@ -1,11 +1,10 @@
-package Config
+package config
 
 import (
 	"bibletool/basic"
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -17,7 +16,7 @@ func Store(data interface{}, path *basic.OSPaths) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = ioutil.WriteFile(path.Configpath, buffer.Bytes(), 0600)
+	err = os.WriteFile(path.Configpath, buffer.Bytes(), 0600)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -27,7 +26,7 @@ func Store(data interface{}, path *basic.OSPaths) {
 func Load(data interface{}, path *basic.OSPaths) {
 	if _, err := os.Stat(path.Configpath); err == nil {
 
-		raw, err := ioutil.ReadFile(path.Configpath)
+		raw, err := os.ReadFile(path.Configpath)
 		if err != nil {
 			fmt.Println(err)
 		}

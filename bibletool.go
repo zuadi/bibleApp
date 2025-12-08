@@ -17,11 +17,11 @@ import (
 )
 
 import (
-	"bibletool/Config"
-	"bibletool/Modules"
 	"bibletool/basic"
 	"bibletool/biblecsvreader"
 	"bibletool/biblefunc"
+	"bibletool/config"
+	"bibletool/modules"
 	"bibletool/output"
 	"sync"
 )
@@ -32,14 +32,14 @@ func main() {
 	// it checks if verse exists in main translation and if not give out the not found verses
 
 	//variables
-	var UserChoice Modules.UserChoices
+	var UserChoice modules.UserChoices
 	var wg sync.WaitGroup
 
 	//call basic function
 	ospath := basic.Settings()
 
 	//read config if file exists
-	Config.Load(&UserChoice, ospath)
+	config.Load(&UserChoice, ospath)
 
 	// read bibleindex and bibletranslation
 	Bibleindex := biblecsvreader.ReadCSV(ospath)
@@ -203,7 +203,7 @@ func main() {
 
 				text_main := biblefunc.GetVersText(ospath.Currentdirectory+"bibles"+ospath.Pathseperator+UserChoice.Maintransation+".SQLite3", VerseCheck)
 
-				var lst_translationtext = make([]Modules.OutputText, 0, 40)
+				var lst_translationtext = make([]modules.OutputText, 0, 40)
 				var lst_translation = make([]string, 0, 40)
 
 				if len(transl_result) > 0 {
@@ -287,7 +287,7 @@ func main() {
 
 				// save checkbox settings for next start
 				post := UserChoice
-				Config.Store(post, ospath)
+				config.Store(post, ospath)
 				//remove temporary folder
 				defer basic.Deltemp(ospath.Tempdir)
 

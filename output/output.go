@@ -8,8 +8,8 @@ import (
 
 	"time"
 
-	"bibletool/Modules"
 	"bibletool/basic"
+	"bibletool/modules"
 	"embed"
 	"fmt"
 	"runtime"
@@ -20,7 +20,6 @@ import (
 )
 import (
 	"bibletool/pdfmerge"
-	"io/ioutil"
 	"log"
 	"path/filepath"
 	"sync"
@@ -29,7 +28,7 @@ import (
 //go:embed pics/*
 var picsfiles embed.FS
 
-func Writetextfile(paths *basic.OSPaths, in_text Modules.OutputText, filename string, docprocess *widget.ProgressBar) {
+func Writetextfile(paths *basic.OSPaths, in_text modules.OutputText, filename string, docprocess *widget.ProgressBar) {
 	// Create a txt file for writing
 	f, _ := os.Create(paths.Outputpath + paths.Pathseperator + "txt" + paths.Pathseperator + filename + ".txt")
 
@@ -70,7 +69,7 @@ func Writetextfile(paths *basic.OSPaths, in_text Modules.OutputText, filename st
 
 }
 
-func Writesamedoctext(path *basic.OSPaths, maintext Modules.OutputText, lst_transtext []Modules.OutputText, filename string, w4document *widget.Label, docprogress *widget.ProgressBar) {
+func Writesamedoctext(path *basic.OSPaths, maintext modules.OutputText, lst_transtext []modules.OutputText, filename string, w4document *widget.Label, docprogress *widget.ProgressBar) {
 
 	docprogress.Max = float64(len(maintext)) - 1
 
@@ -148,7 +147,7 @@ func Writesamedoctext(path *basic.OSPaths, maintext Modules.OutputText, lst_tran
 	w.Flush()
 }
 
-func Writehtmlfile(in_text Modules.OutputText, translationtype string, filename string, sermon_title string, pastor_name string, paths *basic.OSPaths, docprogress *widget.ProgressBar, wg *sync.WaitGroup) {
+func Writehtmlfile(in_text modules.OutputText, translationtype string, filename string, sermon_title string, pastor_name string, paths *basic.OSPaths, docprogress *widget.ProgressBar, wg *sync.WaitGroup) {
 
 	//remove header and footer
 	if _, err := os.Stat(paths.Tempdir + paths.Pathseperator + filename + "header.html"); err == nil {
@@ -515,7 +514,7 @@ func Writehtmlfile(in_text Modules.OutputText, translationtype string, filename 
 	docprogress.SetValue(docprogress.Max)
 }
 
-func Writesamehtmlfile(maintext Modules.OutputText, lst_transtext []Modules.OutputText, filename string, sermon_title string, pastor_name string, paths *basic.OSPaths, w4document *widget.Label, docprocess *widget.ProgressBar) {
+func Writesamehtmlfile(maintext modules.OutputText, lst_transtext []modules.OutputText, filename string, sermon_title string, pastor_name string, paths *basic.OSPaths, w4document *widget.Label, docprocess *widget.ProgressBar) {
 
 	filecontent := "<!DOCTYPE html>\n" +
 		"<html>\n" +
@@ -953,7 +952,7 @@ func checkifArabic(input string) bool {
 func CombinedPDF(paths *basic.OSPaths) {
 
 	// get files in directory
-	files, err := ioutil.ReadDir(paths.Outputpath)
+	files, err := os.ReadDir(paths.Outputpath)
 	if err != nil {
 		log.Fatal(err)
 	}

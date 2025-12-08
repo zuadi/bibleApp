@@ -2,7 +2,7 @@ package pdfmerge
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/unidoc/unidoc/pdf/creator"
@@ -28,7 +28,7 @@ func (s DirSource) MergeTo(c *creator.Creator) error {
 }
 
 func (s *DirSource) scanMergeables() {
-	filesInDir, _ := ioutil.ReadDir(s.path)
+	filesInDir, _ := os.ReadDir(s.path)
 
 	for _, file := range filesInDir {
 		if file.IsDir() {
