@@ -31,7 +31,7 @@ jobs:
       # Build Inno Setup installer
       - name: Build installer using ISS script
         run: |
-          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" InnoSetupConfigFile.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "InnoSetupConfigFile.iss"
 
       # Upload installer
       - name: Upload installer
