@@ -1,32 +1,25 @@
 package biblecsvreader
 
 import (
-	"bibletool/basic"
 	"encoding/csv"
 	"os"
 )
 
-type Bibleindex struct {
-	CSVData    [][]string
-	Bibletrans []string
-}
+type BibleData [][]string
 
-func ReadCSV(path *basic.OSPaths) *Bibleindex {
-	var bi Bibleindex
+func ReadCSV(path string) (BibleData, error) {
 	// open csv config file
-	f, err := os.Open(path.CsvPath)
-	basic.CheckErr(err, "Error open Bibleindex.csv file")
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
 	// remember to close the file at the end of the program
 	defer f.Close()
 
 	// read csv values using csv.Reader
 	csvReader := csv.NewReader(f)
 	csvReader.Comma = ';'
-	bi.CSVData, err = csvReader.ReadAll()
 
-	basic.CheckErr(err, "Error could not read csv file")
-	// this function read all avaiable translation from csv config file
-	bi.Bibletrans = bi.CSVData[0][1:]
-
-	return &bi
+	return csvReader.ReadAll()
 }

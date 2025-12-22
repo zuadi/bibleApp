@@ -6,24 +6,18 @@ package main
 import (
 	"C"
 	"os"
-	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/skratchdot/open-golang/open"
 )
-
 import (
-	"bibletool/basic"
-	"bibletool/biblecsvreader"
-	"bibletool/biblefunc"
-	"bibletool/config"
-	"bibletool/modules"
-	"bibletool/output"
-	"sync"
+	"bibletool/bibletool"
+	"bibletool/bibletool/consts"
+	"fmt"
+	"path/filepath"
 )
 
 func main() {
@@ -31,283 +25,367 @@ func main() {
 	// it will create a txt and pdf file of each translation or a combined file with all translation.
 	// it checks if verse exists in main translation and if not give out the not found verses
 
+	bt, err := bibletool.NewBibletool()
+	if err != nil {
+		panic(err)
+	}
+
 	//variables
-	var UserChoice modules.UserChoices
-	var wg sync.WaitGroup
+	// var wg sync.WaitGroup
 
-	//call basic function
-	ospath := basic.Settings()
+	// all bible translation
+	allTranslations, err := bt.GetAllTranslations()
+	if err != nil {
+		panic(err)
+	}
 
-	//read config if file exists
-	config.Load(&UserChoice, ospath)
+	// make new fyne app
+	app := app.New()
+	mainWindow := app.NewWindow(consts.AppName)
+	mainWindow.SetMaster()
 
-	// read bibleindex and bibletranslation
-	Bibleindex := biblecsvreader.ReadCSV(ospath)
-
-	// make new window
-	a := app.New()
-	w := a.NewWindow("Bibletool")
-	r, _ := fyne.LoadResourceFromPath(ospath.IconPath)
-	w.SetIcon(r)
+	r, err := fyne.LoadResourceFromPath(consts.IconPath)
+	if err != nil {
+		bt.LogError("load icon resource to fyne", err)
+		panic(err)
+	}
+	mainWindow.SetIcon(r)
 
 	// make title
 	label1 := widget.NewLabel("Select Main Translation")
 
 	// make checkboxes
-	setofcheck := widget.NewCheckGroup(Bibleindex.Bibletrans, func(s []string) {
-		UserChoice.Checkboxes = s
+	setofcheck := widget.NewCheckGroup(allTranslations, func(s []string) {
+		bt.SetTranslations(s)
 	})
 
 	// show main translation option
-	selection := widget.NewSelect(Bibleindex.Bibletrans, func(s string) {
-		UserChoice.Maintransation = s
+	selection := widget.NewSelect(allTranslations, func(s string) {
+		bt.SetMaintranslation(s)
 	})
 
 	// same document checkbox
-	checkbox_document := widget.NewCheck("All in one document", func(result bool) { UserChoice.SameDocument = result })
+	checkbox_document := widget.NewCheck("All in one document", func(result bool) { bt.SetSameDocument(result) })
 
 	//set last User Choices read from config file
-	setofcheck.SetSelected(UserChoice.Checkboxes)
-	selection.SetSelected(UserChoice.Maintransation)
-	checkbox_document.SetChecked(UserChoice.SameDocument)
+	setofcheck.SetSelected(bt.GetSelectedTranslations())
+	selection.SetSelected(bt.GetMaintranslation())
+	checkbox_document.SetChecked(bt.GetSameDocument())
 
 	//select all translations
 	sel_alltrans := widget.NewCheck("Select all", func(b bool) {
+		t := []string{}
 		if b {
-			setofcheck.SetSelected(Bibleindex.Bibletrans)
-			setofcheck.Refresh()
-		} else {
-			setofcheck.SetSelected([]string{})
-			setofcheck.Refresh()
+			t = allTranslations
 		}
+		setofcheck.SetSelected(t)
+		setofcheck.Refresh()
 	})
 
 	//get sermontitle
 	sermonname := widget.NewEntry()
 	sermonname.PlaceHolder = "Enter Sermon title"
 	label3 := widget.NewLabel("Sermontitle:")
-	sermonname.SetText(strings.TrimSpace(UserChoice.SermonTitle))
+	sermonname.SetText(bt.GetSermonTitle())
 
 	//get pastor name
 	pastorname := widget.NewEntry()
 	pastorname.PlaceHolder = "Enter Name of pastor"
 	label4 := widget.NewLabel("Name of Pastor:")
-	pastorname.SetText(strings.TrimSpace(UserChoice.Pastor))
+	pastorname.SetText(bt.GetPastor())
 
 	label2 := widget.NewLabel("Select Translations")
 
 	verse_entry := widget.NewMultiLineEntry()
 
+	var openWindow bool
+	w2 := app.NewWindow(consts.AppName)
+
 	b1 := widget.NewButton("Translate", func() {
+		// warning error window still open
+		if openWindow {
+			w2.RequestFocus()
+			return
+		}
 
-		if UserChoice.Maintransation == "" {
-			w2 := a.NewWindow("Bibletool")
-			w2.Resize(fyne.NewSize(200, 200))
-			w2label := widget.NewLabel("No Maintranslation choosen")
-			button := widget.NewButton("Ok", func() { w2.Close() })
-			w2.SetContent(container.NewCenter(container.NewVBox(w2label, button)))
-			w2.Show()
-
-		} else {
-
-			//remove maintranslation of  checkresult
-			var templist []string
-
-			for i := range UserChoice.Checkboxes {
-				if UserChoice.Checkboxes[i] == UserChoice.Maintransation {
-					continue
-				}
-
-				templist = append(templist, UserChoice.Checkboxes[i])
+		go func() {
+			// check whether main translation is not set
+			mainTranslation := bt.GetMaintranslation()
+			if mainTranslation == "" {
+				openWindow = true
+				w2.Resize(fyne.NewSize(200, 200))
+				w2.SetContent(container.NewCenter(container.NewVBox(
+					widget.NewLabel("No Maintranslation choosen"),
+					widget.NewButton("Ok", func() { w2.Close() }),
+				),
+				),
+				)
+				w2.Show()
+				w2.SetOnClosed(func() { openWindow = false })
+				return
 			}
 
-			transl_result := templist
+			/* start translating */
 
-			//extract entered bible verses
-			entrytext := verse_entry.Text
+			// save sermon title
+			bt.SetSermonTitle(sermonname.Text)
 
-			// get sermon title
-			UserChoice.SermonTitle = sermonname.Text
-
-			//get pastor name
-			UserChoice.Pastor = pastorname.Text
+			//save pastor name
+			bt.SetPastor(pastorname.Text)
 
 			//get bible verses
-			verses := biblefunc.Getbibleverses(entrytext)
+			bibleVerses, err := bt.GetBibleVerses(verse_entry.Text, selection.SelectedIndex())
+			if err != nil {
+				var errText string
+				var labelText = "This Bibleverses were not found:"
 
-			VerseCheck := verses.Check_verses(selection.SelectedIndex(), Bibleindex.CSVData)
-
-			var listoutput string
-
-			if len(VerseCheck.Notfoundlist) > 0 {
-				listoutput = ""
-				for _, item := range VerseCheck.Notfoundlist {
-					for _, element := range item {
-						listoutput = listoutput + element
-					}
-				}
-			}
-
-			if VerseCheck.Notfound {
-
-				w3 := a.NewWindow("Bibletool")
-				w3.Resize(fyne.NewSize(200, 200))
-				w3label := widget.NewLabel("This Bibleverses were not found:")
-
-				w3label1 := widget.NewLabel(listoutput)
-				button2 := widget.NewButton("Ok", func() { w3.Close() })
-				w3.SetContent(container.NewCenter(container.NewVBox(w3label, w3label1, button2)))
-				w3.Show()
-			} else {
-
-				var currentcount = 1
-				var documentname string
-
-				//progressbar
-				w4 := a.NewWindow("Bibletool")
-				w4.SetIcon(r)
-				w4.Resize(fyne.NewSize(250, 250))
-				w4label1 := widget.NewLabel("Translating for you:")
-				w4document := widget.NewLabel("In progress...")
-				docprogress := widget.NewProgressBar()
-				w4label2 := widget.NewLabel("Total progress")
-				progress := widget.NewProgressBar()
-				w4.CenterOnScreen()
-				w4.SetContent(container.NewCenter(container.NewVBox(w4label1, w4document, docprogress, w4label2, progress)))
-				w4.Show()
-
-				//progressbar for pdf generating
-				w5 := a.NewWindow("Bibletool")
-				w5.SetIcon(r)
-				w5.Resize(fyne.NewSize(200, 100))
-				w5label := widget.NewLabel("Make pdf's")
-				progresspdf := widget.NewProgressBar()
-				w5.CenterOnScreen()
-				w5.SetContent(container.NewCenter(container.NewVBox(w5label, progresspdf)))
-
-				//check if biletranslation folder exists otherwise create
-				if _, err := os.Stat(ospath.Outputpath); os.IsNotExist(err) {
-					err = os.Mkdir(ospath.Outputpath, 0777)
-					basic.CheckErr(err, "Error could not create Bibletranslation folder")
+				if err.Error() != "no bibleverses entered" {
+					errText = err.Error()
 				} else {
-					err = os.RemoveAll(ospath.Outputpath)
-					basic.CheckErr(err, "Error could not remove Bibletranslation folder")
-					err = os.Mkdir(ospath.Outputpath, 0777)
-					basic.CheckErr(err, "Error could not create Bibletranslation folder")
-				}
-				//create subfolders of Bibletranslation
-				err := os.Mkdir(ospath.Outputpath+ospath.Pathseperator+"html", 0777)
-				basic.CheckErr(err, "Error could not create Bibletranslation\\html folder")
-				err = os.Mkdir(ospath.Outputpath+ospath.Pathseperator+"txt", 0777)
-				basic.CheckErr(err, "Error could not create Bibletranslation\\txt folder")
-
-				text_main := biblefunc.GetVersText(ospath.Currentdirectory+"bibles"+ospath.Pathseperator+UserChoice.Maintransation+".SQLite3", VerseCheck)
-
-				var lst_translationtext = make([]modules.OutputText, 0, 40)
-				var lst_translation = make([]string, 0, 40)
-
-				if len(transl_result) > 0 {
-					for _, translation := range transl_result {
-
-						outtext := biblefunc.GetTranslationVerses(VerseCheck, translation, Bibleindex.CSVData)
-
-						text_translation := biblefunc.GetVersText(ospath.Currentdirectory+"bibles"+ospath.Pathseperator+translation+".SQLite3", outtext)
-
-						lst_translationtext = append(lst_translationtext, text_translation)
-						lst_translation = append(lst_translation, translation)
-					}
+					labelText = "No bibleverses entered"
 				}
 
-				if UserChoice.SameDocument { //write in same file
-					output.Writesamedoctext(ospath, text_main, lst_translationtext, "Main "+UserChoice.Maintransation, w4document, docprogress)
-					output.Writesamehtmlfile(text_main, lst_translationtext, "Main "+UserChoice.Maintransation, UserChoice.SermonTitle, UserChoice.Pastor, ospath, w4document, docprogress)
+				openWindow = true
+				w2 = app.NewWindow(consts.AppName)
+				w2.Resize(fyne.NewSize(200, 200))
 
-					//processbar info
-					w4document.SetText(documentname)
-					progress.Max = 1
-					currentcount += 1
-					progress.SetValue(float64(currentcount))
+				w2.SetContent(container.NewCenter(container.NewVBox(
+					widget.NewLabel(labelText),
+					widget.NewLabel(errText),
+					widget.NewButton("Ok", func() { w2.Close() }),
+				),
+				),
+				)
+				w2.Show()
+				w2.SetOnClosed(func() { openWindow = false })
+				return
+			}
 
-				} else { //write seperate files
-					// write to file
-					output.Writetextfile(ospath, text_main, UserChoice.Maintransation, docprogress)
-					output.Writehtmlfile(text_main, "Main", UserChoice.Maintransation, UserChoice.SermonTitle, UserChoice.Pastor, ospath, docprogress, &wg)
+			bt.TotalProgress = func(progress float64) {
+				fmt.Println("total", progress)
+			}
 
-					//processbar info
-					// translation count for process bar
-					progress.Max = float64(len(lst_translation) + 1)
-					w4document.SetText(UserChoice.Maintransation)
-					progress.SetValue(float64(currentcount))
+			bt.PdfProgress = func(progress float64) {
+				fmt.Println("pdf", progress)
+			}
 
-					for i, text := range lst_translationtext {
-						wg.Wait()
-						output.Writetextfile(ospath, text, lst_translation[i], docprogress)
-						output.Writehtmlfile(text, "Translation", lst_translation[i], UserChoice.SermonTitle, UserChoice.Pastor, ospath, docprogress, &wg)
+			// var currentcount = 0.0
+			// var documentname string
 
-						//processbar info
-						w4document.SetText(lst_translation[i])
-						currentcount += 1
-						progress.SetValue(float64(currentcount))
-					}
+			bt.SetVerses(verse_entry.Text)
+			//progressbar
+			w2 = app.NewWindow(consts.AppName)
+			w2.SetIcon(r)
+			w2.Resize(fyne.NewSize(250, 250))
 
-					w5.Show()
-					w4.Hide()
+			w4document := widget.NewLabel("In progress...")
+			docprogress := widget.NewProgressBar()
+			progress := widget.NewProgressBar()
 
-					wg.Add(len(lst_translation) + 1)
-					go func() {
-						var progressvalue float64
-						for {
+			w2.CenterOnScreen()
+			w2.SetContent(container.NewCenter(container.NewVBox(
+				widget.NewLabel("Translating for you:"),
+				w4document,
+				docprogress,
+				widget.NewLabel("Total progress"),
+				progress,
+			),
+			),
+			)
+			w2.Show()
 
-							progresspdf.Max = float64(len(lst_translationtext) + 1)
-							progressvalue = progresspdf.Max - float64(basic.WaitingQue)
-							if progressvalue > 0 {
-								w5label.SetText("make pdf's")
-								progresspdf.SetValue(float64(progressvalue))
-							}
-						}
+			//progressbar for pdf generating
+			w5 := app.NewWindow(consts.AppName)
+			w5.SetIcon(r)
+			w5.Resize(fyne.NewSize(200, 100))
+			w5label := widget.NewLabel("Make pdf's")
+			progresspdf := widget.NewProgressBar()
+			w5.CenterOnScreen()
+			w5.SetContent(container.NewCenter(container.NewVBox(
+				w5label,
+				progresspdf,
+			),
+			),
+			)
 
-					}()
+			//check if biletranslation folder exists otherwise create
+			if _, err := os.Stat(bt.OsPaths.Outputpath); !os.IsNotExist(err) {
+				if err := os.RemoveAll(bt.OsPaths.Outputpath); err != nil {
+					bt.LogError("remove dir "+bt.OsPaths.Outputpath, err)
+				}
+			}
 
-					wg.Wait()
+			if err := os.Mkdir(bt.OsPaths.Outputpath, 0777); err != nil {
+				bt.LogError("create dir "+bt.OsPaths.Outputpath, err)
+			}
 
-					if len(lst_translation) > 1 {
-						//make one pdf with all translations
-						output.CombinedPDF(ospath)
-					}
+			//create subfolders of Bibletranslation
+			if err := os.Mkdir(filepath.Join(bt.OsPaths.Outputpath, "html"), 0777); err != nil {
+				bt.LogError("create dir "+filepath.Join(bt.OsPaths.Outputpath, "html"), err)
+			}
+
+			if err := os.Mkdir(filepath.Join(bt.OsPaths.Outputpath, "txt"), 0777); err != nil {
+				bt.LogError("create dir "+filepath.Join(bt.OsPaths.Outputpath, "txt"), err)
+			}
+
+			mainVerses, err := bibleVerses.GetVerseText(mainTranslation)
+			if err != nil {
+				bt.LogError("get verse text in maintranslation", err)
+			}
+
+			// var lst_translationtext = make(models.Paragraphs, 0, 40)
+			// var lst_translation = make([]string, 0, 40)
+
+			for _, translation := range bt.FilteredTranslations() {
+				translations, err := bt.GetTranslationVerses(bibleVerses, translation)
+				if err != nil {
+					bt.LogError("get verse text in translations", err)
+				}
+				for _, t := range translations.Paragraphs {
+					fmt.Println(120, t)
+				}
+				// lst_translationtext = append(lst_translationtext, text_translation)
+				// lst_translation = append(lst_translation, translation)
+			}
+
+			fmt.Println(1, mainVerses)
+			for _, i := range mainVerses.Paragraphs {
+				fmt.Println(2, i.Title)
+				for _, o := range i.Verse {
+					fmt.Println(3, o)
 
 				}
+			}
+			os.Exit(123)
+			var i float64
+			bt.DocumentProgress = func(title string, proc float64) {
+				i += proc
+				fmt.Println(345, docprogress.Max, title, docprogress.Value, i)
+				fyne.Do(func() {
+					docprogress.SetValue(i)
 
-				// open file browser of translation
-				err = open.Run(ospath.Outputpath)
-				basic.CheckErr(err, "Error open file browser")
+				})
+			}
 
-				w4.Close()
-				w5.Close()
-				w.Close()
+			if bt.GetSameDocument() {
+				// docprogress.Max = float64(len(text_main) + len(lst_translation))
+				// bt.WriteTextFile("Main "+bt.GetMaintranslation(), text_main, lst_translationtext...)
+				// bt.Writesamehtmlfile(text_main, lst_translationtext, "Main "+bt.GetMaintranslation(), w4document, docprogress)
 
-				// save checkbox settings for next start
-				post := UserChoice
-				config.Store(post, ospath)
-				//remove temporary folder
-				defer basic.Deltemp(ospath.Tempdir)
+				// //processbar info
+				// w4document.SetText(documentname)
+				// progress.Max = 1
+				// currentcount += 1
+				// progress.SetValue(float64(currentcount))
+
+			} else {
+				//write seperate files
+				// fmt.Println(1, len(text_main))
+				// fmt.Println(2, len(lst_translationtext))
+				// docprogress.Max = float64(len(text_main) + len(lst_translationtext))
+
+				// // write to file
+				// bt.WriteTextFile(bt.GetMaintranslation(), text_main)
+
+				// bt.Writehtmlfile(text_main, "Main "+bt.GetMaintranslation(), &wg)
+
+				// //processbar info
+				// // translation count for process bar
+				// progress.Max = float64(len(lst_translation) + 1)
+				// w4document.SetText(bt.GetMaintranslation())
+				// progress.SetValue(float64(currentcount))
+
+				//TODO:
+				// for i, text := range lst_translationtext {
+				// 	wg.Wait()
+				// 	bt.WriteTextFile(lst_translation[i], text...)
+
+				// 	bt.Writehtmlfile(text, "Translation "+lst_translation[i], &wg)
+
+				// 	//processbar info
+				// 	w4document.SetText(lst_translation[i])
+				// 	currentcount += 1
+				// 	progress.SetValue(float64(currentcount))
+				// }
+
+				w5.Show()
+
+				// wg.Add(len(lst_translation) + 1)
+				// go func() {
+				// 	var progressvalue float64
+				// 	for {
+
+				// 		progresspdf.Max = float64(len(lst_translationtext) + 1)
+				// 		progressvalue = progresspdf.Max - float64(basic.WaitingQue)
+				// 		if progressvalue > 0 {
+				// 			fmt.Println(basic.WaitingQue)
+				// 			w5label.SetText("make pdf's")
+				// 			progresspdf.SetValue(float64(progressvalue))
+				// 		}
+				// 		break
+
+				// 	}
+				// }()
+
+				// wg.Wait()
+
+				// if len(lst_translation) > 1 {
+				// 	//make one pdf with all translations
+				// 	bt.CombinePDF()
+				// }
 
 			}
-		}
+
+			//close bibletool and clean up
+			if err := bt.Close(); err != nil {
+				panic(err)
+			}
+
+			mainWindow.Close()
+		}()
 	})
 
 	verse_entry.SetPlaceHolder("Enter bible verses here, like:\nLuke 10.1\nJoh 3.1-14\nPsalm 2.3, 4.5-7\n")
+	if verses := bt.GetVerses(); verses != "" {
+		verse_entry.SetText(verses)
+	}
 
-	toprow := container.NewGridWithRows(2, container.NewGridWithColumns(3, label1, label2, checkbox_document), container.NewCenter(sel_alltrans))
-	//colunm1 := container.NewVBox(selection, dialogin)
-	colunm1 := container.NewVBox(selection)
-	colunm2 := container.NewVScroll(setofcheck)
-	colunm3 := container.NewVBox(container.NewGridWithRows(6, label3, sermonname, label4, pastorname), b1)
+	// set fyne
+	mainWindow.SetContent(
+		//set window content
+		container.NewGridWithColumns(1,
+			//set main content above verse field
+			container.NewVBox(
 
-	secondelement := container.NewGridWithColumns(3, colunm1, colunm2, colunm3)
-	firstelement := container.NewVBox(toprow, secondelement)
-	content := container.NewGridWithColumns(1, firstelement, container.NewMax(verse_entry))
-
-	w.SetContent(content)
-
-	w.ShowAndRun()
+				container.NewGridWithRows(2,
+					//set top row with label and checkboxes all in one document
+					container.NewGridWithColumns(3,
+						label1,
+						label2,
+						checkbox_document,
+					),
+					container.NewCenter(sel_alltrans),
+				),
+				// set 3rd column with
+				container.NewGridWithColumns(3,
+					// set 1st column with main translation
+					container.NewVBox(selection),
+					// set 2nd column translation checkboxes
+					container.NewVScroll(setofcheck),
+					// set 3rd column with sermon title, pastor name and translate button
+					container.NewVBox(container.NewGridWithRows(6,
+						label3,
+						sermonname,
+						label4,
+						pastorname),
+						b1,
+					),
+				),
+			),
+			//set verse text field
+			container.NewStack(verse_entry),
+		),
+	)
+	// open window
+	mainWindow.ShowAndRun()
 }
