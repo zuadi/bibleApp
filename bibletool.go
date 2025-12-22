@@ -228,7 +228,7 @@ func main() {
 				bt.LogError("create dir "+filepath.Join(bt.OsPaths.Outputpath, "txt"), err)
 			}
 
-			mainVerses, err := bibleVerses.GetVerseText(mainTranslation)
+			mainVerses, err := bibleVerses.GetMainVerseText(mainTranslation)
 			if err != nil {
 				bt.LogError("get verse text in maintranslation", err)
 			}
@@ -236,27 +236,8 @@ func main() {
 			// var lst_translationtext = make(models.Paragraphs, 0, 40)
 			// var lst_translation = make([]string, 0, 40)
 
-			for _, translation := range bt.FilteredTranslations() {
-				translations, err := bt.GetTranslationVerses(bibleVerses, translation)
-				if err != nil {
-					bt.LogError("get verse text in translations", err)
-				}
-				for _, t := range translations.Paragraphs {
-					fmt.Println(120, t)
-				}
-				// lst_translationtext = append(lst_translationtext, text_translation)
-				// lst_translation = append(lst_translation, translation)
-			}
+			translationVerses := bt.GetTranslationVerses(bibleVerses, bt.FilteredTranslations()...)
 
-			fmt.Println(1, mainVerses)
-			for _, i := range mainVerses.Paragraphs {
-				fmt.Println(2, i.Title)
-				for _, o := range i.Verse {
-					fmt.Println(3, o)
-
-				}
-			}
-			os.Exit(123)
 			var i float64
 			bt.DocumentProgress = func(title string, proc float64) {
 				i += proc
@@ -268,8 +249,8 @@ func main() {
 			}
 
 			if bt.GetSameDocument() {
-				// docprogress.Max = float64(len(text_main) + len(lst_translation))
-				// bt.WriteTextFile("Main "+bt.GetMaintranslation(), text_main, lst_translationtext...)
+				docprogress.Max = float64(mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount())
+				bt.WriteSameTextFile(mainVerses, translationVerses)
 				// bt.Writesamehtmlfile(text_main, lst_translationtext, "Main "+bt.GetMaintranslation(), w4document, docprogress)
 
 				// //processbar info
