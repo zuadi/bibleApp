@@ -18,6 +18,7 @@ import (
 	"bibletool/bibletool/consts"
 	"fmt"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -100,6 +101,14 @@ func main() {
 
 	var openWindow bool
 	w2 := app.NewWindow(consts.AppName)
+	w4document := widget.NewLabel("In progress...")
+	docprogress := widget.NewProgressBar()
+	progress := widget.NewProgressBar()
+	//progressbar for pdf generating
+	w5 := app.NewWindow(consts.AppName)
+	w5.SetIcon(r)
+	w5.Resize(fyne.NewSize(200, 100))
+	w5.CenterOnScreen()
 
 	b1 := widget.NewButton("Translate", func() {
 		// warning error window still open
@@ -161,52 +170,63 @@ func main() {
 				return
 			}
 
-			bt.TotalProgress = func(progress float64) {
-				fmt.Println("total", progress)
-			}
-
-			bt.PdfProgress = func(progress float64) {
-				fmt.Println("pdf", progress)
-			}
-
-			// var currentcount = 0.0
-			// var documentname string
-
+			start := time.Now()
 			bt.SetVerses(verse_entry.Text)
 			//progressbar
-			w2 = app.NewWindow(consts.AppName)
-			w2.SetIcon(r)
-			w2.Resize(fyne.NewSize(250, 250))
+			fyne.Do(func() {
+				w2 = app.NewWindow(consts.AppName)
+				w2.SetIcon(r)
+				w2.Resize(fyne.NewSize(250, 250))
 
-			w4document := widget.NewLabel("In progress...")
-			docprogress := widget.NewProgressBar()
-			progress := widget.NewProgressBar()
+				w2.CenterOnScreen()
+				w2.SetContent(container.NewCenter(container.NewVBox(
+					widget.NewLabel("Translating for you:"),
+					w4document,
+					docprogress,
+					widget.NewLabel("Total progress"),
+					progress,
+				),
+				),
+				)
+				w2.Show()
+			})
 
-			w2.CenterOnScreen()
-			w2.SetContent(container.NewCenter(container.NewVBox(
-				widget.NewLabel("Translating for you:"),
-				w4document,
-				docprogress,
-				widget.NewLabel("Total progress"),
-				progress,
-			),
-			),
-			)
-			w2.Show()
-
-			//progressbar for pdf generating
-			w5 := app.NewWindow(consts.AppName)
-			w5.SetIcon(r)
-			w5.Resize(fyne.NewSize(200, 100))
 			w5label := widget.NewLabel("Make pdf's")
 			progresspdf := widget.NewProgressBar()
-			w5.CenterOnScreen()
-			w5.SetContent(container.NewCenter(container.NewVBox(
-				w5label,
-				progresspdf,
-			),
-			),
-			)
+
+			fyne.Do(func() {
+				w5.SetContent(container.NewCenter(container.NewVBox(
+					w5label,
+					progresspdf,
+				),
+				),
+				)
+			})
+
+			var total float64
+			bt.TotalProgress = func(p float64) {
+				total += p
+				fyne.Do(func() {
+					progress.SetValue(total)
+
+				})
+			}
+
+			var document float64
+			bt.DocumentProgress = func(title string, p float64) {
+				document += p
+				fyne.Do(func() {
+					docprogress.SetValue(document)
+				})
+			}
+
+			var pdf float64
+			bt.PdfProgress = func(p float64) {
+				pdf += p
+				fyne.Do(func() {
+					progresspdf.SetValue(pdf)
+				})
+			}
 
 			//check if biletranslation folder exists otherwise create
 			if _, err := os.Stat(bt.OsPaths.Outputpath); !os.IsNotExist(err) {
@@ -233,96 +253,44 @@ func main() {
 				bt.LogError("get verse text in maintranslation", err)
 			}
 
-			// var lst_translationtext = make(models.Paragraphs, 0, 40)
-			// var lst_translation = make([]string, 0, 40)
-
 			translationVerses := bt.GetTranslationVerses(bibleVerses, bt.FilteredTranslations()...)
 
-			var i float64
-			bt.DocumentProgress = func(title string, proc float64) {
-				i += proc
-				fmt.Println(345, docprogress.Max, title, docprogress.Value, i)
-				fyne.Do(func() {
-					docprogress.SetValue(i)
+			// set max progress scale
+			docprogress.Max = 2 * float64((mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount()))
 
+			if bt.GetSameDocument() {
+				progress.Max = 2
+
+				bt.WriteTextFile(mainVerses, translationVerses)
+				bt.WriteHtmlfile(mainVerses, translationVerses, true)
+			} else {
+				//write seperate files
+				progress.Max = 1 + (float64(+len(*translationVerses)))*2
+				progresspdf.Max = float64(+len(*translationVerses)) * 2
+
+				// // write to file
+				bt.WriteTextFile(mainVerses, nil)
+				for _, t := range *translationVerses {
+					bt.WriteTextFile(t, nil)
+					bt.WriteHtmlfile(t, nil, false)
+				}
+				fyne.Do(func() {
+					w5.Show()
 				})
 			}
 
-			if bt.GetSameDocument() {
-				docprogress.Max = float64(mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount())
-				bt.WriteSameTextFile(mainVerses, translationVerses)
-				// bt.Writesamehtmlfile(text_main, lst_translationtext, "Main "+bt.GetMaintranslation(), w4document, docprogress)
-
-				// //processbar info
-				// w4document.SetText(documentname)
-				// progress.Max = 1
-				// currentcount += 1
-				// progress.SetValue(float64(currentcount))
-
-			} else {
-				//write seperate files
-				// fmt.Println(1, len(text_main))
-				// fmt.Println(2, len(lst_translationtext))
-				// docprogress.Max = float64(len(text_main) + len(lst_translationtext))
-
-				// // write to file
-				// bt.WriteTextFile(bt.GetMaintranslation(), text_main)
-
-				// bt.Writehtmlfile(text_main, "Main "+bt.GetMaintranslation(), &wg)
-
-				// //processbar info
-				// // translation count for process bar
-				// progress.Max = float64(len(lst_translation) + 1)
-				// w4document.SetText(bt.GetMaintranslation())
-				// progress.SetValue(float64(currentcount))
-
-				//TODO:
-				// for i, text := range lst_translationtext {
-				// 	wg.Wait()
-				// 	bt.WriteTextFile(lst_translation[i], text...)
-
-				// 	bt.Writehtmlfile(text, "Translation "+lst_translation[i], &wg)
-
-				// 	//processbar info
-				// 	w4document.SetText(lst_translation[i])
-				// 	currentcount += 1
-				// 	progress.SetValue(float64(currentcount))
-				// }
-
-				w5.Show()
-
-				// wg.Add(len(lst_translation) + 1)
-				// go func() {
-				// 	var progressvalue float64
-				// 	for {
-
-				// 		progresspdf.Max = float64(len(lst_translationtext) + 1)
-				// 		progressvalue = progresspdf.Max - float64(basic.WaitingQue)
-				// 		if progressvalue > 0 {
-				// 			fmt.Println(basic.WaitingQue)
-				// 			w5label.SetText("make pdf's")
-				// 			progresspdf.SetValue(float64(progressvalue))
-				// 		}
-				// 		break
-
-				// 	}
-				// }()
-
-				// wg.Wait()
-
-				// if len(lst_translation) > 1 {
-				// 	//make one pdf with all translations
-				// 	bt.CombinePDF()
-				// }
-
-			}
+			bt.Wg.Wait()
+			bibletool.CancelProgress = true
 
 			//close bibletool and clean up
 			if err := bt.Close(); err != nil {
 				panic(err)
 			}
 
-			mainWindow.Close()
+			fyne.Do(func() {
+				mainWindow.Close()
+			})
+			fmt.Println("used time:", time.Since(start))
 		}()
 	})
 

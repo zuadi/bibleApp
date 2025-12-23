@@ -1,83 +1,82 @@
-package abbreviation
+package models
 
 import "strings"
 
-func Replace(input string) string {
-
-	switch {
-	case input == "Gn":
+func ReplaceAbbreviation(input string) string {
+	switch input {
+	case "Gn":
 		return strings.Replace(input, "Gn", "Gen", 1)
-	case input == "Lv":
+	case "Lv":
 		return strings.Replace(input, "Lv", "Lev", 1)
-	case input == "Nm":
+	case "Nm":
 		return strings.Replace(input, "Nm", "Num", 1)
-	case input == "Du":
+	case "Du":
 		return strings.Replace(input, "Du", "Deu", 1)
-	case input == "Dt":
+	case "Dt":
 		return strings.Replace(input, "Dt", "Deu", 1)
-	case input == "Jdg":
+	case "Jdg":
 		return strings.Replace(input, "Jdg", "Judg", 1)
-	case input == "Jgs":
+	case "Jgs":
 		return strings.Replace(input, "Jgs", "Judg", 1)
-	case input == "Rth":
+	case "Rth":
 		return strings.Replace(input, "Rth", "Rut", 1)
-	case input == "Sm":
+	case "Sm":
 		return strings.Replace(input, "Sm", "Sam", 1)
-	case input == "Kgs":
+	case "Kgs":
 		return strings.Replace(input, "Kgs", "Kin", 1)
-	case input == "Kg":
+	case "Kg":
 		return strings.Replace(input, "Kg", "Kin", 1)
-	case input == "Jb":
+	case "Jb":
 		return strings.Replace(input, "Jb", "Job", 1)
-	case input == "Psalms":
+	case "Psalms":
 		return strings.Replace(input, "Psalms", "Psalm", 1)
-	case input == "Prv":
+	case "Prv":
 		return strings.Replace(input, "Prv", "Pro", 1)
-	case input == "Sg":
+	case "Sg":
 		return strings.Replace(input, "Sg", "Song", 1)
-	case input == "Hld":
+	case "Hld":
 		return strings.Replace(input, "Hld", "Hohe", 1)
-	case input == "Klgl":
+	case "Klgl":
 		return strings.Replace(input, "Klgl", "Klage", 1)
-	case input == "Ezk":
+	case "Ezk":
 		return strings.Replace(input, "Ezk", "Eze", 1)
-	case input == "Dan":
+	case "Dan":
 		return strings.Replace(input, "Dn", "Dan", 1)
-	case input == "Hb":
+	case "Hb":
 		return strings.Replace(input, "Hb", "Hab", 1)
-	case input == "Obd":
+	case "Obd":
 		return strings.Replace(input, "Obd", "Oba", 1)
-	case input == "Zp":
+	case "Zp":
 		return strings.Replace(input, "Zp", "Zep", 1)
-	case input == "Hg":
+	case "Hg":
 		return strings.Replace(input, "Hg", "Hag", 1)
-	case input == "Mt":
+	case "Mt":
 		return strings.Replace(input, "Mt", "Mat", 1)
-	case input == "Mk":
+	case "Mk":
 		return strings.Replace(input, "Mk", "Mar", 1)
-	case input == "Mrk":
+	case "Mrk":
 		return strings.Replace(input, "Mrk", "Mar", 1)
-	case input == "Lk":
+	case "Lk":
 		return strings.Replace(input, "Lk", "Luk", 1)
-	case input == "Jn":
+	case "Jn":
 		return strings.Replace(input, "Jn", "Joh", 1)
-	case input == "Jhn":
+	case "Jhn":
 		return strings.Replace(input, "Jhn", "Joh", 1)
-	case input == "Apg":
+	case "Apg":
 		return strings.Replace(input, "Apg", "Apos", 1)
-	case input == "Rm":
+	case "Rm":
 		return strings.Replace(input, "Rm", "Rom", 1)
-	case input == "Php":
+	case "Php":
 		return strings.Replace(input, "Php", "Phili", 1)
-	case input == "Phm":
+	case "Phm":
 		return strings.Replace(input, "Phm", "Phile", 1)
-	case input == "Phlm":
+	case "Phlm":
 		return strings.Replace(input, "Phlm", "Phile", 1)
-	case input == "Pt":
+	case "Pt":
 		return strings.Replace(input, "Pt", "Pet", 1)
-	case input == "Offb":
+	case "Offb":
 		return strings.Replace(input, "Offb", "Offen", 1)
-	case input == "S. ":
+	case "S. ":
 		return strings.Replace(input, "S. ", "", 1)
 	}
 

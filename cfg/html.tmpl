@@ -1,0 +1,185 @@
+{{- $ctx :=. -}}
+{{- $mainTranslation :=.MainTranslation -}}
+<!DOCTYPE html>
+<html {{- if .RightToLeftDocument}} dir="rtl"{{- end}}>
+<head>
+<meta charset="UTF-8">
+<title>{{- if $mainTranslation.IsMain}}Main{{- else}}Translation{{- end}}{{$mainTranslation.Name}}</title>
+<style>
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  font-family: Arial, Helvetica, sans-serif,"Nirmala UI";
+  flex-wrap: nowrap; 
+  page-break-after: avoid; 
+  width: 95%;  
+}
+
+.header-space{
+  height: 100px;
+  margin-top:0;
+  margin-bottom:0px;
+}
+
+.header-left {
+  display: flex;
+  align-items: flex-start;  
+  gap: 10px;
+  max-width: 30%;      
+  flex-shrink: 0;      
+  flex-wrap: nowrap;      
+}
+
+.header-left img {
+  width:65px;
+  height:55px;
+}
+
+.header-left-title {
+  font-size: 12pt;
+  color: rgb(88, 80, 99);
+  white-space: normal;   
+  word-break: break-word; 
+  overflow-wrap: break-word;
+  flex: 1;          
+}
+
+.header-right {
+  flex: 1 1 auto;     
+  text-align: {{- if .RightToLeftDocument}}left{{- else}}right{{- end}};
+  font-size: 16pt;
+  font-weight: bold;
+  color: rgb(88, 80, 99);
+  min-width: 200px;     
+}
+
+.content {
+	padding-top: 0px;
+	margin-top: 0px;
+	font-family: Arial, Helvetica, sans-serif,"Nirmala UI";
+	padding-bottom: 10px;
+}
+
+.verse-title {
+	font-size: 12pt;
+	color: rgb(199, 99, 99);
+	font-family: Arial, Helvetica, sans-serif,"Nirmala UI";
+	margin-left: 2px;
+  margin-bottom: 0px;
+	page-break-after: avoid;
+}
+
+.verse-text {
+	color: black;
+	font-size: 14pt;
+	font-family: Arial, Helvetica, sans-serif,"Nirmala UI";
+	margin-left: 12px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	font-weight: normal;
+	page-break-inside: avoid;
+}
+.verse-num {
+  font-weight: bold;  
+  font-size: 0.7em;    
+  margin-right: 4px;  
+  vertical-align: super;
+  color: #000;          
+ 	font-family: Arial, Helvetica, sans-serif,"Nirmala UI";
+}
+
+@page {
+  size: A4;
+  margin-top: 10mm;
+  margin-right: 20mm;
+  margin-left: 10mm;
+  margin-bottom: 20mm;
+
+  @bottom-left {
+    margin-bottom: 10px;
+	font-family: Arial;
+    content: "{{.Date}}";
+    font-size: 10pt;
+    color: black;
+  }
+  @bottom-center {
+    margin-bottom: 10px;
+	font-family: Arial;
+    content: "{{.PastorName}}";
+    font-size: 10pt;
+    color: black;
+  }
+  @bottom-right {
+    margin-bottom: 10px;
+	font-family: Arial;
+    content: counter(page) "/" counter(pages);
+    font-size: 10pt;
+    color: black;
+  }
+}
+</style>
+<body>
+<table>
+  <thead>
+    <tr>
+      <td>
+        <div class="header-space">
+          <div class="header">
+            <div class="header-left">
+              <img src="{{.CurrentPath}}/pics/pottershouse.png" alt="Logo">
+              <div class="header-left-title">{{.SermonTitle}}</div>
+            </div>
+            <div class="header-right">{{- if $mainTranslation.IsMain}}Main{{- else}}Translation{{- end}} {{$mainTranslation.Name}}</div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div class="content">
+          {{- range $paraIndex, $mainPara := $mainTranslation.Paragraphs}}
+            <h3 class="verse-title">{{$mainPara.Title}}</h3>
+            {{- range $mainPara.Verse}}
+              {{- $ctx.Progress $mainPara.Title 1}}
+              <p class="verse-text">
+              {{- if .RightToLeft}}
+                <span dir="rtl">
+              {{- end}}
+              {{- if ne .Number 0}}
+                <span class="verse-num">{{.Number}}</span>
+              {{- end}}
+              {{.Text}}
+              {{- if .RightToLeft}}
+                </span>
+              {{- end}}
+              </p>
+            {{- end}}  
+            {{- if $ctx.SameDocument}}
+              {{- range $ctx.Translations}}
+                <br>
+                {{- $transPara := .GetParagraphByIndex $paraIndex}}
+                {{- range $transPara.Verse}}
+                  {{- $ctx.Progress $transPara.Title 1}}
+                  <p class="verse-text">
+                  {{- if .RightToLeft}}<span dir="rtl">{{- end}}
+                  {{- if ne .Number 0}}<span class="verse-num">{{.Number}}</span>{{- end}}
+                  {{.Text}}
+                  {{- if .RightToLeft}}</span>{{- end}}
+                </p>       
+              {{- end}}
+              {{- end}}
+            {{- end}} 
+            <br>
+            <br>
+          {{- end}}   
+        </div>
+      </td>
+    </tr>
+</tbody>
+</table>
+</body>
+</html>
