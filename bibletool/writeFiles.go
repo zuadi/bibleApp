@@ -20,7 +20,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 
 	documentName := maintranslation.GetTranslationName()
 
-	f, err := os.Create(filepath.Join(bt.OsPaths.Outputpath, "txt", documentName+".txt"))
+	f, err := os.Create(filepath.Join(bt.OutputDir, "txt", documentName+".txt"))
 	if err != nil {
 		bt.LogError("write text file", err)
 		return err
@@ -94,7 +94,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) error {
 	documentName := maintranslation.GetTranslationName()
 
-	err := bt.WriteHtml(filepath.Join(bt.OsPaths.Outputpath, "html", documentName+".html"), models.HtmlStruct{
+	err := bt.WriteHtml(filepath.Join(bt.OutputDir, "html", documentName+".html"), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
 		SermonTitle:         bt.GetSermonTitle(),
 		PastorName:          bt.GetPastor(),
@@ -102,7 +102,7 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 		MainTranslation:     maintranslation,
 		Translations:        translations,
 		Date:                time.Now().Format("02-January-2006"),
-		CurrentPath:         template.URL(filepath.ToSlash(bt.OsPaths.Currentdirectory)),
+		CurrentPath:         template.URL(filepath.ToSlash(os.Args[0])),
 		ProgressFnc:         bt.DocumentProgress,
 		SameDocument:        sameDocument,
 	})
@@ -128,8 +128,8 @@ func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 		var files []pdfModels.File
 		for _, name := range documentNames {
 			files = append(files, pdfModels.File{
-				Input:  filepath.Join(bt.OsPaths.Outputpath, "html", name+".html"),
-				Output: filepath.Join(bt.OsPaths.Outputpath, name+".pdf"),
+				Input:  filepath.Join(bt.OutputDir, "html", name+".html"),
+				Output: filepath.Join(bt.OutputDir, name+".pdf"),
 			})
 		}
 
@@ -144,21 +144,21 @@ func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 func (bt *Bibletool) CombinePDF() error {
 
 	// get files in directory
-	files, err := os.ReadDir(bt.OsPaths.Outputpath)
+	files, err := os.ReadDir(bt.OutputDir)
 	if err != nil {
 		bt.LogError("combine pdf", err)
 	}
 
 	//get list of all pdf's in output folder
-	var pdflist = make([]string, 0, 40)
+	pdflist := []string{}
 	for _, file := range files {
 		if !file.IsDir() && filepath.Ext(file.Name()) == ".pdf" {
-			pdflist = append(pdflist, filepath.Join(bt.OsPaths.Outputpath, file.Name()))
+			pdflist = append(pdflist, filepath.Join(bt.OutputDir, file.Name()))
 		}
 	}
 
 	// merge them in one file
-	err = pdfmerge.Pdfmerge(pdflist, filepath.Join(bt.OsPaths.Outputpath, "AllTranslation.pdf"))
+	err = pdfmerge.Pdfmerge(pdflist, filepath.Join(bt.OutputDir, "AllTranslation.pdf"))
 	if err != nil {
 		bt.LogError("combine pdf", err)
 	}

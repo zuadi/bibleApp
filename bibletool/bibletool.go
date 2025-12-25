@@ -1,11 +1,11 @@
 package bibletool
 
 import (
-	"bibletool/basic"
-	"bibletool/bibletool/consts"
+	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
 	"encoding/csv"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"gitea.tecamino.com/paadi/tecamino-logger/logging"
@@ -15,7 +15,8 @@ import (
 type Bibletool struct {
 	config           *models.Config
 	Logger           *logging.Logger
-	OsPaths          *basic.OSPaths
+	OutputDir        string
+	TempDir          string
 	bibleIndex       models.BibleIndex
 	Wg               sync.WaitGroup
 	TotalProgress    func(process float64)
@@ -30,10 +31,20 @@ func NewBibletool() (bt *Bibletool, err error) {
 		return nil, err
 	}
 
-	//call basic function
-	bt.OsPaths, err = basic.GetOSPaths()
-	if err != nil {
-		bt.LogError("get OS paths", err)
+	//get user dir for Bibletranslation folder
+	bt.OutputDir = env.OutputDir.GetValue()
+	if bt.OutputDir == "" {
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			bt.LogError("get user home dir", err)
+			return nil, err
+		}
+		bt.OutputDir = filepath.Join(homedir, "Bibletranslation")
+	}
+
+	//load enviroment variables
+	if err := env.Load(".env"); err != nil {
+		bt.LogError("load enviroment variables", err)
 	}
 
 	//read config if file exists
@@ -45,7 +56,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 }
 
 func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
-	f, err := os.Open(consts.BibleIndexFile)
+	f, err := os.Open(env.BibleIndexFile.GetValue())
 	if err != nil {
 		bt.LogError("open csv file", err)
 		return nil, err
@@ -65,7 +76,7 @@ func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
 
 func (bt *Bibletool) Close() error {
 	// open file browser of translation
-	if err := open.Run(bt.OsPaths.Outputpath); err != nil {
+	if err := open.Run(bt.OutputDir); err != nil {
 		bt.LogError("open file browser", err)
 		return err
 	}
@@ -75,8 +86,7 @@ func (bt *Bibletool) Close() error {
 	if err != nil {
 		return err
 	}
-	//remove temporary folder
-	return basic.Deltemp(bt.OsPaths.Tempdir)
+	return nil
 }
 
 func (bt *Bibletool) TotalProgressAdd(add int) {

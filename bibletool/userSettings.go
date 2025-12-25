@@ -1,7 +1,7 @@
 package bibletool
 
 import (
-	"bibletool/bibletool/consts"
+	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
 	"bytes"
 	"encoding/gob"
@@ -12,8 +12,9 @@ import (
 func (bt *Bibletool) LoadUserSettings() error {
 	bt.config = &models.Config{}
 
-	if _, err := os.Stat(consts.ConfigPath); err == nil {
-		raw, err := os.ReadFile(consts.ConfigPath)
+	path := env.ConfigFile.GetValue()
+	if _, err := os.Stat(path); err == nil {
+		raw, err := os.ReadFile(path)
 		if err != nil {
 			bt.LogError("load user settings", err)
 			return err
@@ -40,7 +41,7 @@ func (bt *Bibletool) SaveUserSettings() error {
 		bt.LogError("save user config", err)
 		return err
 	}
-	err = os.WriteFile(consts.ConfigPath, buffer.Bytes(), 0644)
+	err = os.WriteFile(env.ConfigFile.GetValue(), buffer.Bytes(), 0644)
 	if err != nil {
 		bt.LogError("save user config", err)
 		return err

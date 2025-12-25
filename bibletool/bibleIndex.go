@@ -1,7 +1,7 @@
 package bibletool
 
 import (
-	"bibletool/bibletool/consts"
+	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
 	"encoding/csv"
 	"os"
@@ -9,7 +9,7 @@ import (
 
 func (bt *Bibletool) ReadBibleIndexes() (models.BibleIndex, error) {
 	// open csv config file
-	f, err := os.Open(consts.BibleIndexFile)
+	f, err := os.Open(env.BibleIndexFile.GetValue())
 	if err != nil {
 		return nil, err
 	}
