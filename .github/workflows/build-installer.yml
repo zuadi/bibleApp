@@ -1,6 +1,6 @@
 name: Build Go App and Installers
 
-on:
+on: []
   #push:
   #  branches: [ "main" ]
   #pull_request:
