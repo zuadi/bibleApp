@@ -7,7 +7,6 @@ import (
 	"encoding/csv"
 	"os"
 	"sync"
-	"time"
 
 	"gitea.tecamino.com/paadi/tecamino-logger/logging"
 	"github.com/skratchdot/open-golang/open"
@@ -96,17 +95,18 @@ var processing float64
 var CancelProgress bool
 
 func (bt *Bibletool) PdfProgressAdd(add int) {
-	if processing == 0.0 {
-		go func() {
-			for {
-				if CancelProgress {
-					break
-				}
-				bt.PdfProgress(0.01)
-				time.Sleep(500 * time.Millisecond)
-			}
-		}()
-	}
+	///TODO:
+	// if processing == 0.0 {
+	// 	go func() {
+	// 		for {
+	// 			if CancelProgress {
+	// 				break
+	// 			}
+	// 			bt.PdfProgress(0.01)
+	// 			time.Sleep(500 * time.Millisecond)
+	// 		}
+	// 	}()
+	// }
 	if bt.PdfProgress != nil {
 		bt.PdfProgress(float64(add))
 	}

@@ -1,6 +1,9 @@
 package models
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 type Translations []*Translation
 
@@ -38,6 +41,13 @@ func (t *Translation) AddParagraph() *Paragraph {
 	p := &Paragraph{}
 	t.Paragraphs = append(t.Paragraphs, p)
 	return p
+}
+
+func (t *Translation) GetTranslationName() string {
+	if t.IsMain {
+		return fmt.Sprintf("Main %s", t.Name)
+	}
+	return fmt.Sprintf("Translation %s", t.Name)
 }
 
 func (t *Translation) GetPargraphAmount() int {

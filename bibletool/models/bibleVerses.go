@@ -129,7 +129,7 @@ func (bv *Bibleverses) GetAllNotFound() error {
 }
 
 func (bv *Bibleverses) GetMainVerseText(filepath string) (translation *Translation, err error) {
-	translation = &Translation{}
+	translation = &Translation{IsMain: true}
 	translation.SetTranslationName(filepath)
 
 	//open sqlite file

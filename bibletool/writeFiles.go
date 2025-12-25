@@ -10,17 +10,17 @@ import (
 	"time"
 
 	"gitea.tecamino.com/paadi/html2pdf"
+	"gitea.tecamino.com/paadi/html2pdf/converter"
+	pdfModels "gitea.tecamino.com/paadi/html2pdf/models"
 	"gitea.tecamino.com/paadi/pdfmerge"
 )
 
 func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translations *models.Translations) error {
 	defer bt.TotalProgressAdd(1)
 
-	documentName := "Translation " + maintranslation.Name + ".txt"
-	if maintranslation.IsMain {
-		documentName = "Main " + maintranslation.Name + ".txt"
-	}
-	f, err := os.Create(filepath.Join(bt.OsPaths.Outputpath, "txt", documentName))
+	documentName := maintranslation.GetTranslationName()
+
+	f, err := os.Create(filepath.Join(bt.OsPaths.Outputpath, "txt", documentName+".txt"))
 	if err != nil {
 		bt.LogError("write text file", err)
 		return err
@@ -92,13 +92,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 }
 
 func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) error {
-	var documentName string
-	if maintranslation.IsMain {
-		documentName = "Main " + maintranslation.Name
-	} else {
-		documentName = "Translation " + maintranslation.Name
-
-	}
+	documentName := maintranslation.GetTranslationName()
 
 	err := bt.WriteHtml(filepath.Join(bt.OsPaths.Outputpath, "html", documentName+".html"), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
@@ -117,16 +111,34 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 	if err != nil {
 		bt.LogError("htmlbuilder", err)
 	}
+	return nil
+}
 
+func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
+	var err error
+	var c *converter.Converter
 	bt.Wg.Go(func() {
-		defer bt.PdfProgressAdd(1)
-		bt.PdfProgressAdd(1)
-		err = html2pdf.Convert("assets", filepath.Join(bt.OsPaths.Outputpath, "html", documentName+".html"), filepath.Join(bt.OsPaths.Outputpath, documentName+".pdf"))
+		c, err = html2pdf.NewConverterInstance("assets")
+		if err != nil {
+			bt.LogError("html2pdf", err)
+		}
+
+		c.SetProgressCallback(bt.PdfProgressAdd)
+
+		var files []pdfModels.File
+		for _, name := range documentNames {
+			files = append(files, pdfModels.File{
+				Input:  filepath.Join(bt.OsPaths.Outputpath, "html", name+".html"),
+				Output: filepath.Join(bt.OsPaths.Outputpath, name+".pdf"),
+			})
+		}
+
+		err = c.Convert(files...)
 		if err != nil {
 			bt.LogError("html2pdf", err)
 		}
 	})
-	return nil
+	return err
 }
 
 func (bt *Bibletool) CombinePDF() error {

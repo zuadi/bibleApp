@@ -220,11 +220,9 @@ func main() {
 				})
 			}
 
-			var pdf float64
 			bt.PdfProgress = func(p float64) {
-				pdf += p
 				fyne.Do(func() {
-					progresspdf.SetValue(pdf)
+					progresspdf.SetValue(p)
 				})
 			}
 
@@ -260,19 +258,39 @@ func main() {
 
 			if bt.GetSameDocument() {
 				progress.Max = 2
+				progresspdf.Max = float64(+len(*translationVerses))
 
 				bt.WriteTextFile(mainVerses, translationVerses)
 				bt.WriteHtmlfile(mainVerses, translationVerses, true)
+				names := []string{mainVerses.Name}
+				for _, translation := range *translationVerses {
+					names = append(names, translation.Name)
+				}
+				err := bt.ConvertToPdf(names...)
+				if err != nil {
+					bt.LogError("convertToPdf", err)
+				}
 			} else {
 				//write seperate files
 				progress.Max = 1 + (float64(+len(*translationVerses)))*2
-				progresspdf.Max = float64(+len(*translationVerses)) * 2
+				progresspdf.Max = float64(+len(*translationVerses))
 
 				// // write to file
+				names := []string{mainVerses.GetTranslationName()}
+
 				bt.WriteTextFile(mainVerses, nil)
+				bt.WriteHtmlfile(mainVerses, nil, false)
+
 				for _, t := range *translationVerses {
 					bt.WriteTextFile(t, nil)
 					bt.WriteHtmlfile(t, nil, false)
+
+					names = append(names, t.GetTranslationName())
+				}
+
+				err := bt.ConvertToPdf(names...)
+				if err != nil {
+					bt.LogError("convertToPdf", err)
 				}
 				fyne.Do(func() {
 					w5.Show()
