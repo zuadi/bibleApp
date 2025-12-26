@@ -1,10 +1,13 @@
 package models
 
 import (
+	"C"
 	"database/sql"
 	"fmt"
 	"path/filepath"
 	"strings"
+
+	_ "modernc.org/sqlite"
 )
 
 type BibleDatabase struct {
@@ -14,7 +17,7 @@ type BibleDatabase struct {
 func NewBibleDatabase(filepath string) (bd *BibleDatabase, err error) {
 	bd = &BibleDatabase{}
 	//open sqlite file
-	bd.database, err = sql.Open("sqlite3", getTranlationDBPath(filepath))
+	bd.database, err = sql.Open("sqlite", getTranlationDBPath(filepath))
 	if err != nil {
 		return nil, err
 	}

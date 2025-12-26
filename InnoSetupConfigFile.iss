@@ -35,6 +35,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: ".\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\.env"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bibles\*"; DestDir: "{app}\bibles"; Flags: ignoreversion recursesubdirs
 Source: ".\cfg\*"; DestDir: "{app}\cfg"; Flags: ignoreversion recursesubdirs
 Source: ".\font\*"; DestDir: "{app}\font"; Flags: ignoreversion recursesubdirs

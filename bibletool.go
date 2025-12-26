@@ -2,7 +2,6 @@ package main
 
 //This script is a bibletranslation that gives out a .txt file for using the text further and as well as in pdf.
 // The maintranslation has to be choosen and further translation can be checked, the checkbox same document includes all text in one txt and pdf document
-
 import (
 	"bibletool/bibletool"
 	"bibletool/bibletool/env"
@@ -15,10 +14,10 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
+
 	// This function is a bibletranslation help that there can be a main translation choosen and the desired verses entered.
 	// it will create a txt and pdf file of each translation or a combined file with all translation.
 	// it checks if verse exists in main translation and if not give out the not found verses
