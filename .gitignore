@@ -3,3 +3,5 @@ BibletoolConfig
 config
 *log
 assets
+*-shm
+*-wal
