@@ -104,7 +104,7 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 		MainTranslation:     maintranslation,
 		Translations:        translations,
 		Date:                time.Now().Format("02-January-2006"),
-		CurrentPath:         template.URL(filepath.ToSlash(os.Args[0])),
+		IconPath:            template.URL(filepath.ToSlash(bt.AbsIconPath)),
 		ProgressFnc:         bt.DocumentProgress,
 		SameDocument:        sameDocument,
 	})

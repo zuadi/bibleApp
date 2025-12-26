@@ -18,6 +18,7 @@ type Bibletool struct {
 	Logger           *logging.Logger
 	OutputDir        string
 	TempDir          string
+	AbsIconPath      string
 	bibleIndex       models.BibleIndex
 	Wg               sync.WaitGroup
 	TotalProgress    func(process float64)
@@ -52,6 +53,14 @@ func NewBibletool() (bt *Bibletool, err error) {
 		bt.OutputDir = filepath.Join(homedir, "Bibletranslation")
 	}
 	bt.DebugLog("NewBibletool", bt.OutputDir)
+
+	workingDir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	//set icon path for html template
+	bt.AbsIconPath = filepath.Join(workingDir, env.IconPath.GetValue())
 
 	//read config if file exists
 	err = bt.LoadUserSettings()
