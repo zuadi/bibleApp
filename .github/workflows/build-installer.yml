@@ -93,8 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Windows-Bibletool-Installer
-          path: |
-            "Output/Bibletool Setup.exe"
+          path: Output/*.exe
 
       - name: Upload macOS artifacts
         if: runner.os == 'macOS'
