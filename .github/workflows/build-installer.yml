@@ -94,7 +94,7 @@ jobs:
         with:
           name: Windows-Bibletool-Installer
           path: |
-            Output/Bibletool\ Setup.exe
+            "Output/Bibletool Setup.exe"
 
       - name: Upload macOS artifacts
         if: runner.os == 'macOS'
