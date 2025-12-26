@@ -15,6 +15,7 @@ type HtmlStruct struct {
 	SameDocument        bool
 }
 
+// is used in tmpl
 func (h *HtmlStruct) Progress(title string, progress float64) string {
 	if h.ProgressFnc == nil {
 		return ""
