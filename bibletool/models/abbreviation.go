@@ -79,6 +79,5 @@ func ReplaceAbbreviation(input string) string {
 	case "S. ":
 		return strings.Replace(input, "S. ", "", 1)
 	}
-
 	return input
 }

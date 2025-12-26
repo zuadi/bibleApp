@@ -42,7 +42,7 @@ func (bv *Bibleverses) CheckVerses(mainTranslationIndex int, data BibleIndex) (e
 	for _, bibleVerses := range bv.BibleVerses {
 		// variables
 		var compareBook string
-
+		var notFoundCount int
 		for _, verse := range bibleVerses.Verse {
 			// if not valid bibleverse continue
 			if strings.Contains(bibleVerses.Book, "not a valid") {
@@ -103,8 +103,14 @@ func (bv *Bibleverses) CheckVerses(mainTranslationIndex int, data BibleIndex) (e
 				}
 			}
 
-			if !found {
+			if notFoundCount > 1 {
+				break
+			} else if notFoundCount == 1 {
+				bv.AddSecondNotFound(fmt.Sprintf("- %s %d.%d, %d ...\n", strings.TrimSpace(bibleVerses.Book), bibleVerses.Chapter, verse.Number-1, verse.Number))
+				notFoundCount += 1
+			} else if !found {
 				bv.AddNotFound(fmt.Sprintf("- %s %d.%d\n", strings.TrimSpace(bibleVerses.Book), bibleVerses.Chapter, verse.Number))
+				notFoundCount += 1
 			}
 		}
 	}
@@ -115,6 +121,10 @@ func (bv *Bibleverses) AddNotFound(verse string) {
 	bv.Logger.Debug("AddNotFound", "")
 	bv.Notfound = true
 	bv.NotFoundList = append(bv.NotFoundList, verse)
+}
+
+func (bv *Bibleverses) AddSecondNotFound(verse string) {
+	bv.NotFoundList[len(bv.NotFoundList)-1] = verse
 }
 
 func (bv *Bibleverses) GetAllNotFound() error {
