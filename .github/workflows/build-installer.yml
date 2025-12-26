@@ -1,9 +1,9 @@
 name: Build Go App and Installers
 
-on: []
-  #push:
-  #  branches: [ "main" ]
-  #pull_request:
+on: 
+  push:
+    branches: [ "main" ]
+  pull_request:
 
 jobs:
   build:
@@ -32,6 +32,21 @@ jobs:
             go build -o bibletool .
           fi
         shell: bash
+
+      ############################################
+      # WINDOWS: Download & Extract Chrome Headless Shell
+      ############################################
+      - name: Download Chrome for Testing (win64)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir assets
+          curl -L -o chrome-win64.zip https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chromedriver-win64.zip
+
+      - name: Extract Chrome folder to assets
+        if: runner.os == 'Windows'
+        run: |
+          tar -xf chrome-win64.zip
+          move chromedriver-win64 assets\chromedriver-win64
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
