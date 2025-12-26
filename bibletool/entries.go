@@ -14,6 +14,8 @@ type Entries []Entry
 type Entry []string
 
 func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, err error) {
+	bt.DebugLog("GetEntries", "progess all entered bible verses")
+
 	var entries Entries
 	bibleVerses.Logger = bt.Logger
 	//exit if string is empty

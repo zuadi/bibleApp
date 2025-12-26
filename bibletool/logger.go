@@ -1,5 +1,7 @@
 package bibletool
 
+import "fmt"
+
 func (bt *Bibletool) LogInfo(caller, msg string) {
 	bt.Logger.Info(caller, msg)
 }
@@ -10,4 +12,8 @@ func (bt *Bibletool) LogWarning(caller, msg string) {
 
 func (bt *Bibletool) LogError(caller string, msg any) {
 	bt.Logger.Error(caller, msg)
+}
+
+func (bt *Bibletool) DebugLog(caller string, msg any) {
+	bt.Logger.Debug(caller, fmt.Sprint(msg))
 }

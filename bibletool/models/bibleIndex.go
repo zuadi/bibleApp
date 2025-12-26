@@ -1,10 +1,5 @@
 package models
 
-// type Bibleindex struct {
-// 	Bibletranslation string
-// 	Bibleverses      string
-// }
-
 type BibleIndex [][]string
 
 func (bi *BibleIndex) GetByIndex(index int) (output []string) {

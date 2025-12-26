@@ -29,7 +29,7 @@ func (bv *Bibleverses) AddBibleVerse(nbv *Bibleverse) {
 func (bv *Bibleverses) CheckVerses(mainTranslationIndex int, data BibleIndex) (err error) {
 	// This function checks if the entered verses are in the main translation bible, gives out a list of not found verses and, gives out a slice with
 	// all found bibleverses of maintext and index of the config file to find translation text in csv
-
+	bv.Logger.Debug("CheckVerses", "")
 	// if list is empty give this message out
 	if len(bv.BibleVerses) == 0 {
 		return errors.New("- No Biblevers entered\n")
@@ -112,11 +112,13 @@ func (bv *Bibleverses) CheckVerses(mainTranslationIndex int, data BibleIndex) (e
 }
 
 func (bv *Bibleverses) AddNotFound(verse string) {
+	bv.Logger.Debug("AddNotFound", "")
 	bv.Notfound = true
 	bv.NotFoundList = append(bv.NotFoundList, verse)
 }
 
 func (bv *Bibleverses) GetAllNotFound() error {
+	bv.Logger.Debug("GetAllNotFound", "")
 	var stringBuilder strings.Builder
 	for i := range bv.NotFoundList {
 		stringBuilder.WriteString(bv.NotFoundList[i])
@@ -132,6 +134,7 @@ func (bv *Bibleverses) GetMainVerseText(filepath string) (translation *Translati
 	translation = &Translation{IsMain: true}
 	translation.SetTranslationName(filepath)
 
+	bv.Logger.Debug("GetMainVerseText", "open sqlite database")
 	//open sqlite file
 	db, err := NewBibleDatabase(filepath)
 	if err != nil {
@@ -140,6 +143,7 @@ func (bv *Bibleverses) GetMainVerseText(filepath string) (translation *Translati
 	}
 	defer db.Close()
 
+	bv.Logger.Debug("GetMainVerseText", "get all books")
 	// look for book names and book number
 	dbBooks, err := db.GetBooks()
 	if err != nil {
@@ -147,6 +151,7 @@ func (bv *Bibleverses) GetMainVerseText(filepath string) (translation *Translati
 		return translation, err
 	}
 
+	bv.Logger.Debug("GetMainVerseText", "get all bible verses")
 	//look for current biblevers book
 	for _, verses := range bv.BibleVerses {
 		var bookFound bool

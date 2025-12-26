@@ -8,8 +8,11 @@ import (
 )
 
 func (bt *Bibletool) ReadBibleIndexes() (models.BibleIndex, error) {
+	path := env.BibleIndexFile.GetValue()
+	bt.DebugLog("ReadBibleIndexes", "read bibleindex file "+path)
+
 	// open csv config file
-	f, err := os.Open(env.BibleIndexFile.GetValue())
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}

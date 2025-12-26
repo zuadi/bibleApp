@@ -34,18 +34,28 @@ func main() {
 		panic(err)
 	}
 
+	bt.DebugLog("main", "read app name")
 	appName := env.AppName.GetValue()
+	bt.DebugLog("main", appName)
+
+	bt.DebugLog("main", "initiate new fyne app")
 
 	// make new fyne app
 	app := app.New()
 
+	bt.DebugLog("main", "initiate fyne windows builder")
 	wb := ui.NewWindowBuilder(allTranslations)
+	bt.DebugLog("main", "set icon resource path")
 	wb.SetIconResource(env.IconPath.GetValue())
+	bt.DebugLog("main", "set last user entered value from config file")
 	wb.SetMaintranslation(bt.GetMaintranslation())
 	wb.SetTranslations(bt.GetSelectedTranslations())
 	wb.SetSameDocument(bt.GetSameDocument())
 	wb.SetPastorName(bt.GetPastor())
 	wb.SetSermonTitle(bt.GetSermonTitle())
+	wb.SetVerseEntries(bt.GetVerses())
+
+	bt.DebugLog("main", "initiate all callback functions for saving values to config file")
 
 	//call back for main translation
 	wb.GetMainTranslation = func(set string) {
@@ -62,19 +72,24 @@ func main() {
 		bt.SetSameDocument(set)
 	}
 
+	bt.DebugLog("main", "build main window")
 	mainWindow := wb.BuildMainWindow(app, appName)
 
 	var openWindow bool
+	bt.DebugLog("main", "build warning dialog window")
 	warningDialog := wb.BuildDialogWindow(app, appName)
 	warningDialog.SetOnClosed(func() { openWindow = false })
 
+	bt.DebugLog("main", "initiate fyne progress bars")
 	docprogress := widget.NewProgressBar()
 	progress := widget.NewProgressBar()
 	//progressbar for pdf generating
+	bt.DebugLog("main", "pdf progress window")
 	pdfProgressWindow := wb.BuildPdfProgressWindow(app, appName)
 
 	// start translating when 'translation' button pressed
 	wb.Translate = func() {
+		bt.DebugLog("main", "translating")
 
 		mainTranslation := bt.GetMaintranslation()
 		// warning error window still open
@@ -136,9 +151,6 @@ func main() {
 				})
 				return
 			}
-
-			// save verse entries
-			wb.SetVerseEntries(bt.GetVerses())
 
 			fyne.Do(func() {
 				warningDialog.Close()

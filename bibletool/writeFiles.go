@@ -1,6 +1,7 @@
 package bibletool
 
 import (
+	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
 	"bufio"
 	"fmt"
@@ -19,7 +20,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 	defer bt.TotalProgressAdd(1)
 
 	documentName := maintranslation.GetTranslationName()
-
+	bt.DebugLog("WriteTextFile", "write text file "+documentName)
 	f, err := os.Create(filepath.Join(bt.OutputDir, "txt", documentName+".txt"))
 	if err != nil {
 		bt.LogError("write text file", err)
@@ -94,6 +95,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) error {
 	documentName := maintranslation.GetTranslationName()
 
+	bt.DebugLog("WriteHtmlfile", "write tmpl html file "+documentName)
 	err := bt.WriteHtml(filepath.Join(bt.OutputDir, "html", documentName+".html"), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
 		SermonTitle:         bt.GetSermonTitle(),
@@ -117,8 +119,11 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 	var err error
 	var c *converter.Converter
+
+	chromePath := env.ChromePath.GetValue()
+	bt.DebugLog("ConvertToPdf", "open chrome headless shell from "+chromePath)
 	bt.Wg.Go(func() {
-		c, err = html2pdf.NewConverterInstance("assets")
+		c, err = html2pdf.NewConverterInstance(chromePath)
 		if err != nil {
 			bt.LogError("html2pdf", err)
 		}
@@ -127,6 +132,7 @@ func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 
 		var files []pdfModels.File
 		for _, name := range documentNames {
+			bt.DebugLog("ConvertToPdf", "convert "+name)
 			files = append(files, pdfModels.File{
 				Input:  filepath.Join(bt.OutputDir, "html", name+".html"),
 				Output: filepath.Join(bt.OutputDir, name+".pdf"),
@@ -157,8 +163,11 @@ func (bt *Bibletool) CombinePDF() error {
 		}
 	}
 
+	output := filepath.Join(bt.OutputDir, "AllTranslation.pdf")
+	bt.DebugLog("CombinePDF", output)
+
 	// merge them in one file
-	err = pdfmerge.Pdfmerge(pdflist, filepath.Join(bt.OutputDir, "AllTranslation.pdf"))
+	err = pdfmerge.Pdfmerge(pdflist, output)
 	if err != nil {
 		bt.LogError("combine pdf", err)
 	}

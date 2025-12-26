@@ -127,7 +127,9 @@ func (wb *WindowBuilder) GetVerseEntries() string {
 }
 
 func (wb *WindowBuilder) DisableButton() {
-	wb.translateButton.Disable()
+	fyne.Do(func() {
+		wb.translateButton.Disable()
+	})
 }
 
 func (wb *WindowBuilder) ButtonIsDisabled() bool {
@@ -135,7 +137,9 @@ func (wb *WindowBuilder) ButtonIsDisabled() bool {
 }
 
 func (wb *WindowBuilder) EnableButton() {
-	wb.translateButton.Enable()
+	fyne.Do(func() {
+		wb.translateButton.Enable()
+	})
 }
 
 func (wb *WindowBuilder) BuildMainWindow(a fyne.App, appName string) fyne.Window {

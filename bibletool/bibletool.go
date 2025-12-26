@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"gitea.tecamino.com/paadi/tecamino-logger/logging"
@@ -26,12 +27,21 @@ type Bibletool struct {
 
 func NewBibletool() (bt *Bibletool, err error) {
 	bt = &Bibletool{}
-	bt.Logger, err = logging.NewLogger("", logging.DefaultConfig())
+
+	//load enviroment variables
+	if err := env.Load(".env"); err != nil {
+		bt.LogError("load enviroment variables", err)
+	}
+
+	logConfig := logging.DefaultConfig()
+	logConfig.Debug = strings.ToLower(env.Debug.GetValue()) == "true" || env.Debug.GetValue() == "1"
+	bt.Logger, err = logging.NewLogger("", logConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	//get user dir for Bibletranslation folder
+	bt.DebugLog("NewBibletool", "set output directory")
 	bt.OutputDir = env.OutputDir.GetValue()
 	if bt.OutputDir == "" {
 		homedir, err := os.UserHomeDir()
@@ -41,11 +51,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 		}
 		bt.OutputDir = filepath.Join(homedir, "Bibletranslation")
 	}
-
-	//load enviroment variables
-	if err := env.Load(".env"); err != nil {
-		bt.LogError("load enviroment variables", err)
-	}
+	bt.DebugLog("NewBibletool", bt.OutputDir)
 
 	//read config if file exists
 	err = bt.LoadUserSettings()
@@ -56,6 +62,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 }
 
 func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
+	bt.DebugLog("GetAllTranslations", "load bibleindex from file "+env.BibleIndexFile.GetValue())
 	f, err := os.Open(env.BibleIndexFile.GetValue())
 	if err != nil {
 		bt.LogError("open csv file", err)
@@ -63,6 +70,7 @@ func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
 	}
 	defer f.Close()
 
+	bt.DebugLog("GetAllTranslations", "read as csv")
 	// read csv values using csv.Reader
 	csvReader := csv.NewReader(f)
 	csvReader.Comma = ';'
@@ -75,6 +83,7 @@ func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
 }
 
 func (bt *Bibletool) Close() error {
+	bt.DebugLog("Close", "open file explorer "+bt.OutputDir)
 	// open file browser of translation
 	if err := open.Run(bt.OutputDir); err != nil {
 		bt.LogError("open file browser", err)

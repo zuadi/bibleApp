@@ -29,7 +29,7 @@ func (bt *Bibletool) GetBibleVerses(inputtext string, mainSelectIndex int) (bibl
 
 func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, translation ...string) *models.Translations {
 	var translations models.Translations
-
+	bt.DebugLog("GetTranslationVerses", "")
 	for _, trans := range translation {
 		t := &models.Translation{}
 		t.SetTranslationName(trans)

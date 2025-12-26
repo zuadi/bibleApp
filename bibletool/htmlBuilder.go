@@ -8,6 +8,7 @@ import (
 )
 
 func (bt *Bibletool) WriteHtml(outputPath string, data models.HtmlStruct) error {
+	bt.DebugLog("WriteHtml", "start template builder")
 	tmplBuilder := templatebuilder.NewTemplateBuilder()
 	err := tmplBuilder.Generate(env.HtmlTemplateFile.GetValue(), outputPath, &data)
 	if err != nil {
