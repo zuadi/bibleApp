@@ -126,13 +126,16 @@ func main() {
 			bt.SetPastor(wb.GetPastorName())
 
 			//get bible verses
-			bibleVerses, err := bt.GetBibleVerses(wb.GetVerseEntries(), wb.GetMaintranslationIndex())
-			if err != nil {
+			bibleVerses, notFound := bt.GetBibleVerses(wb.GetVerseEntries(), wb.GetMaintranslationIndex())
+			if notFound.IsError {
+				wb.BuildErrorWindow(mainWindow, notFound.Error)
+				return
+			} else if notFound.Error != nil {
 				var errText string
 				var labelText = "This Bibleverses were not found:"
 
-				if err.Error() != "no bibleverses entered" {
-					errText = err.Error()
+				if notFound.Error.Error() != "no bibleverses entered" {
+					errText = notFound.Error.Error()
 				} else {
 					labelText = "No bibleverses entered"
 				}
@@ -210,14 +213,23 @@ func main() {
 			//check if biletranslation folder exists otherwise create
 			if err := utils.MkDirs(bt.OutputDir, "html", "txt"); err != nil {
 				bt.LogError("create dir and subdirs "+bt.OutputDir, err)
+				wb.BuildErrorWindow(mainWindow, err)
+				return
 			}
 
 			mainVerses, err := bibleVerses.GetMainVerseText(mainTranslation)
 			if err != nil {
 				bt.LogError("get verse text in maintranslation", err)
+				wb.BuildErrorWindow(mainWindow, err)
+				return
 			}
 
-			translationVerses := bt.GetTranslationVerses(bibleVerses, bt.FilteredTranslations()...)
+			translationVerses, err := bt.GetTranslationVerses(bibleVerses, bt.FilteredTranslations()...)
+			if err != nil {
+				bt.LogError("get translation verses", err)
+				wb.BuildErrorWindow(mainWindow, err)
+				return
+			}
 
 			// set max progress scale
 			docprogress.Max = 2 * float64((mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount()))
@@ -227,11 +239,13 @@ func main() {
 				progresspdf.Max = float64(+len(*translationVerses))
 
 				if err := bt.WriteTextFile(mainVerses, translationVerses); err != nil {
-					bt.LogError("write text file", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 
 				if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
-					bt.LogError("write html file", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 
 				names := []string{mainVerses.Name}
@@ -240,7 +254,8 @@ func main() {
 				}
 
 				if err := bt.ConvertToPdf(names...); err != nil {
-					bt.LogError("convertToPdf", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 			} else {
 				//write seperate files
@@ -251,27 +266,32 @@ func main() {
 				names := []string{mainVerses.GetTranslationName()}
 
 				if err := bt.WriteTextFile(mainVerses, nil); err != nil {
-					bt.LogError("write text file", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 
 				if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
-					bt.LogError("write html file", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 
 				for _, t := range *translationVerses {
 					if err := bt.WriteTextFile(t, nil); err != nil {
-						bt.LogError("write text file", err)
+						wb.BuildErrorWindow(mainWindow, err)
+						return
 					}
 
 					if err := bt.WriteHtmlfile(t, nil, false); err != nil {
-						bt.LogError("write html file", err)
+						wb.BuildErrorWindow(mainWindow, err)
+						return
 					}
 
 					names = append(names, t.GetTranslationName())
 				}
 
 				if err := bt.ConvertToPdf(names...); err != nil {
-					bt.LogError("convertToPdf", err)
+					wb.BuildErrorWindow(mainWindow, err)
+					return
 				}
 
 				fyne.Do(func() {
@@ -284,7 +304,8 @@ func main() {
 
 			//close bibletool and clean up
 			if err := bt.Close(); err != nil {
-				panic(err)
+				wb.BuildErrorWindow(mainWindow, err)
+				return
 			}
 
 			fyne.Do(func() {

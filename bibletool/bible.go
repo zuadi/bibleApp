@@ -9,25 +9,29 @@ import (
 // this function reads the entered text/bible verses
 // the separation for bibleverses in every line is ", "
 // after that : and , will be replaced with ., a - will include from till verses
-func (bt *Bibletool) GetBibleVerses(inputtext string, mainSelectIndex int) (bibleVerses models.Bibleverses, err error) {
-	bibleVerses, err = bt.GetEntries(inputtext)
+func (bt *Bibletool) GetBibleVerses(inputtext string, mainSelectIndex int) (bibleVerses models.Bibleverses, notFound models.NotFound) {
+	var err error
+	bibleVerses, notFound = bt.GetEntries(inputtext)
 	//exit if string is empty
-	if err != nil {
-		return bibleVerses, err
+	if notFound.Error != nil {
+		return bibleVerses, notFound
 	}
 
 	// read bibleindex and bibletranslation
 	bt.bibleIndex, err = bt.ReadBibleIndexes()
 	if err != nil {
 		bt.LogError("read csv", err)
-		return bibleVerses, err
+		notFound.IsError = true
+		notFound.Error = err
+		return bibleVerses, notFound
 	}
 
 	err = bibleVerses.CheckVerses(mainSelectIndex, bt.bibleIndex)
-	return bibleVerses, err
+	notFound.Error = err
+	return bibleVerses, notFound
 }
 
-func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, translation ...string) *models.Translations {
+func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, translation ...string) (*models.Translations, error) {
 	var translations models.Translations
 	bt.DebugLog("GetTranslationVerses", "")
 	for _, trans := range translation {
@@ -39,7 +43,7 @@ func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, tr
 		db, err := models.NewBibleDatabase(trans)
 		if err != nil {
 			bt.Logger.Error("NewBibleDatabase", err)
-			continue
+			return nil, err
 		}
 		defer db.Close()
 
@@ -47,7 +51,7 @@ func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, tr
 		dbBooks, err := db.GetBooks()
 		if err != nil {
 			bt.Logger.Error("GetBooks", err)
-			continue
+			return nil, err
 		}
 
 		bibleIndex := bt.bibleIndex.GetByValue(trans)
@@ -117,5 +121,5 @@ func (bt *Bibletool) GetTranslationVerses(mainTranslation models.Bibleverses, tr
 			}
 		}
 	}
-	return &translations
+	return &translations, nil
 }

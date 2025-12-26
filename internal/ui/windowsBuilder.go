@@ -3,6 +3,7 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -212,4 +213,10 @@ func (wb *WindowBuilder) BuildPdfProgressWindow(a fyne.App, appName string) fyne
 	w.Resize(fyne.NewSize(200, 100))
 	w.CenterOnScreen()
 	return w
+}
+
+func (wb *WindowBuilder) BuildErrorWindow(w fyne.Window, err error) {
+	d := dialog.NewError(err, w)
+	d.Resize(fyne.Size{Width: 200, Height: 200})
+	d.Show()
 }

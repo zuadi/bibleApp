@@ -9,18 +9,17 @@ import (
 	"strings"
 )
 
-type Entries []Entry
+func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, notFound models.NotFound) {
+	var err error
+	var entries models.Entries
+	bibleVerses.Logger = bt.Logger
 
-type Entry []string
-
-func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, err error) {
 	bt.DebugLog("GetEntries", "progess all entered bible verses")
 
-	var entries Entries
-	bibleVerses.Logger = bt.Logger
 	//exit if string is empty
 	if input == "" {
-		return bibleVerses, errors.New("no bibleverses entered")
+		notFound.Error = errors.New("no bibleverses entered")
+		return bibleVerses, notFound
 	}
 
 	//seperate lines of bibleverses with the newpage character \n
@@ -70,6 +69,9 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 						chapter, err = strconv.Atoi(strings.Split(tempstring[len(tempstring)-1], ".")[0])
 						if err != nil {
 							bt.LogError("chapter to number", err)
+							notFound.IsError = true
+							notFound.Error = err
+							return bibleVerses, notFound
 						}
 						//if 2 element are in list number, book
 					} else if len(tempstring) == 2 {
@@ -77,6 +79,9 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 						chapter, err = strconv.Atoi(strings.Split(tempstring[1], ".")[0])
 						if err != nil {
 							bt.LogError("chapter to number", err)
+							notFound.IsError = true
+							notFound.Error = err
+							return bibleVerses, notFound
 						}
 						//if 1 element are in list number, book
 					} else {
@@ -90,6 +95,9 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 					chapter, err = strconv.Atoi(strings.Split(tempstring[len(tempstring)-1], ".")[0])
 					if err != nil {
 						bt.LogError("chapter to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 					// 5 elements found
 				} else {
@@ -97,6 +105,9 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 					chapter, err = strconv.Atoi(strings.Split(tempstring[len(tempstring)-1], ".")[0])
 					if err != nil {
 						bt.LogError("chapter to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 				}
 
@@ -110,6 +121,9 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 					chapter, err = strconv.Atoi(strings.Split(e, ".")[len(strings.Split(e, "."))-2])
 					if err != nil {
 						bt.LogError("chapter to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 				}
 				//get first vers before -
@@ -162,22 +176,34 @@ func (bt *Bibletool) GetEntries(input string) (bibleVerses models.Bibleverses, e
 					chapter, err = strconv.Atoi(strings.Split(e, ".")[len(strings.Split(e, "."))-2])
 					if err != nil {
 						bt.LogError("chapter to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 					vers, err = strconv.Atoi(strings.Split(e, ".")[len(strings.Split(e, "."))-1])
 					if err != nil {
 						bt.LogError("verse to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 				case strings.Count(e, ".") == 1:
 					// add only verse because its first item including book and chapter
 					vers, err = strconv.Atoi(strings.Split(e, ".")[len(strings.Split(e, "."))-1])
 					if err != nil {
 						bt.LogError("verse to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 				case strings.Count(e, ".") == 2:
 					// else choose this for when two . are in item like 1. Mose 1.1
 					vers, err = strconv.Atoi(strings.Split(e, ".")[len(strings.Split(e, "."))-1])
 					if err != nil {
 						bt.LogError("verse to number", err)
+						notFound.IsError = true
+						notFound.Error = err
+						return bibleVerses, notFound
 					}
 				}
 
