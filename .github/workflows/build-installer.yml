@@ -14,9 +14,6 @@ jobs:
           - os: windows-latest
             arch: amd64
 
-          - os: macos-13   # Intel runner
-            arch: amd64
-
           - os: macos-14   # Apple Silicon runner
             arch: arm64
 
@@ -31,13 +28,17 @@ jobs:
         with:
           go-version: "1.25"
 
+      - name: Enable CGO on macOS
+        if: runner.os == 'macOS'
+        run: echo "CGO_ENABLED=1" >> $GITHUB_ENV
+
       # Build binaries for each OS
       - name: Build Go binary
         run: |
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             go build -ldflags "-H=windowsgui" -o bibletool.exe .
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            GOOS=darwin GOARCH=${{ matrix.arch }} go build -o bibletool-bin .
+            go build -o bibletool-bin .
           else
             go build -o bibletool-bin .
           fi
@@ -80,13 +81,11 @@ jobs:
 
           if [[ "${{ matrix.arch }}" == "arm64" ]]; then
             CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-arm64/chromedriver-mac-arm64.zip"
-          else
-            CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-x64/chromedriver-mac-x64.zip"
-          fi
+         fi
 
           curl -L -o chrome.zip "$CHROME_URL"
           unzip chrome.zip
-          mv chromedriver-* assets/chromedriver
+          mv chromedriver-*/chromedriver assets/chromedriver
           chmod +x assets/chromedriver
           
       ############################################
@@ -114,7 +113,7 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
-          cp *.env $APP/Contents/MacOS/ || true
+          cp .env $APP/Contents/MacOS/ || true
 
       - name: Create DMG
         if: runner.os == 'macOS'
