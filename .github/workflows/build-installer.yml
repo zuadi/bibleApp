@@ -36,7 +36,7 @@ jobs:
       ############################################
       # WINDOWS: Download & Extract Chrome Headless Shell
       ############################################
-      - name: Download Chrome for Testing (win64)
+      - name: Download Headless Chrome Shell
         if: runner.os == 'Windows'
         run: |
           mkdir assets
