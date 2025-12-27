@@ -17,10 +17,15 @@ type BibleDatabase struct {
 func NewBibleDatabase(filepath string) (bd *BibleDatabase, err error) {
 	bd = &BibleDatabase{}
 	//open sqlite file
-	bd.database, err = sql.Open("sqlite", getTranlationDBPath(filepath))
+	bd.database, err = sql.Open("sqlite", getTranlationDBPath(filepath)+"?mode=ro")
 	if err != nil {
 		return nil, err
 	}
+	// 	// Force classic journal mode
+	// _, err = db.Exec(`PRAGMA journal_mode=DELETE;`)
+	// if err != nil {
+	//     return err
+	// }
 	return bd, nil
 }
 
