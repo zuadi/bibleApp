@@ -39,7 +39,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 		path = "env"
 	}
 
-	if err := env.Load(utils.GetDistOsPath(path)); err != nil {
+	if err := env.Load(path); err != nil {
 		fmt.Println("load enviroment variables", err)
 	}
 

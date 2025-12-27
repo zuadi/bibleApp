@@ -137,10 +137,10 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
-          if [[ -f ".env" ]]; then
-            cat .env
-            cp ".env" "$APP/Contents/MacOS/"
-            cp "env" "$APP/Contents/MacOS/"
+          if [[ -f ".${GITHUB_WORKSPACE}/.env" ]]; then
+            cat ${GITHUB_WORKSPACE}/.env
+            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
+            cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/MacOS/"
             echo ".env copied into app bundle"
           else
               echo ".env not found, skipping"
