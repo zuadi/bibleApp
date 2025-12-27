@@ -3,6 +3,7 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
+	"bibletool/utils"
 
 	templatebuilder "gitea.tecamino.com/paadi/template-builder"
 )
@@ -10,7 +11,9 @@ import (
 func (bt *Bibletool) WriteHtml(outputPath string, data models.HtmlStruct) error {
 	bt.DebugLog("WriteHtml", "start template builder")
 	tmplBuilder := templatebuilder.NewTemplateBuilder()
-	err := tmplBuilder.Generate(env.HtmlTemplateFile.GetValue(), outputPath, &data)
+
+	path := utils.GetDistOsPath(env.HtmlTemplateFile.GetValue())
+	err := tmplBuilder.Generate(path, outputPath, &data)
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"bibletool/utils"
+
 	_ "modernc.org/sqlite"
 )
 
@@ -88,5 +90,5 @@ func (bd *BibleDatabase) GetVerse(bookNumber, chapterNumber, verseNumber int) (t
 }
 
 func getTranlationDBPath(translation string) string {
-	return filepath.Join("bibles", translation+".SQLite3")
+	return utils.GetDistOsPath(filepath.Join("bibles", translation+".SQLite3"))
 }

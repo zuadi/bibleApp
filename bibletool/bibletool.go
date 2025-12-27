@@ -3,7 +3,9 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
+	"bibletool/utils"
 	"encoding/csv"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,7 +34,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 
 	//load enviroment variables
 	if err := env.Load(".env"); err != nil {
-		bt.LogError("load enviroment variables", err)
+		fmt.Println("load enviroment variables", err)
 	}
 
 	logConfig := logging.DefaultConfig()
@@ -48,7 +50,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 	if err != nil {
 		return nil, err
 	}
-	bt.Logger, err = logging.NewLogger(filepath.Join(configDir, bt.AppName+".log"), logConfig)
+	bt.Logger, err = logging.NewLogger(filepath.Join(configDir, bt.AppName, bt.AppName+".log"), logConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +85,9 @@ func NewBibletool() (bt *Bibletool, err error) {
 }
 
 func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
-	bt.DebugLog("GetAllTranslations", "load bibleindex from file "+env.BibleIndexFile.GetValue())
-	f, err := os.Open(env.BibleIndexFile.GetValue())
+	path := utils.GetDistOsPath(env.BibleIndexFile.GetValue())
+	bt.DebugLog("GetAllTranslations", "load bibleindex from file "+path)
+	f, err := os.Open(path)
 	if err != nil {
 		bt.LogError("open csv file", err)
 		return nil, err

@@ -3,12 +3,13 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
+	"bibletool/utils"
 	"encoding/csv"
 	"os"
 )
 
 func (bt *Bibletool) ReadBibleIndexes() (models.BibleIndex, error) {
-	path := env.BibleIndexFile.GetValue()
+	path := utils.GetDistOsPath(env.BibleIndexFile.GetValue())
 	bt.DebugLog("ReadBibleIndexes", "read bibleindex file "+path)
 
 	// open csv config file

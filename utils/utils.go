@@ -3,6 +3,7 @@ package utils
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func MkDirs(root string, subfolder ...string) error {
@@ -24,4 +25,11 @@ func MkDirs(root string, subfolder ...string) error {
 	}
 
 	return nil
+}
+
+func GetDistOsPath(path string) string {
+	if runtime.GOOS == "darwin" {
+		return filepath.Join("..", "Resources", path)
+	}
+	return path
 }
