@@ -47,17 +47,19 @@ jobs:
       ############################################
       # WINDOWS: Download & Extract Chrome Headless Shell
       ############################################
-      - name: Download Headless Chrome Shell
+      - name: Download Chrome Headless Shell (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir assets
-          curl -L -o chrome-win64.zip https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chromedriver-win64.zip
+          mkdir -p assets
+          curl -L -o chrome-headless-shell-win64.zip \
+            https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip
 
-      - name: Extract Chrome folder to assets
+      - name: Extract Chrome Headless Shell to assets
         if: runner.os == 'Windows'
+        shell: bash
         run: |
-          tar -xf chrome-win64.zip
-          move chromedriver-win64 assets\chromedriver-win64
+          unzip chrome-headless-shell-win64.zip
+          mv chrome-headless-shell-win64 assets/chrome-headless-shell
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
@@ -72,21 +74,19 @@ jobs:
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "InnoSetupConfigFile.iss"
 
       ############################################
-      # MACOS: Download Chrome Driver (per arch)
+      # MACOS: Download Chrome Headless Shell (arm64)
       ############################################
-      - name: Download Chrome Driver (macOS)
+      - name: Download Chrome Headless Shell (macOS arm64)
         if: runner.os == 'macOS'
         run: |
           mkdir -p assets
 
-          if [[ "${{ matrix.arch }}" == "arm64" ]]; then
-            CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-arm64/chromedriver-mac-arm64.zip"
-          fi
+          curl -L -o chrome-headless-shell-mac-arm64.zip \
+            https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-arm64/chrome-headless-shell-mac-arm64.zip
 
-          curl -L -o chrome.zip "$CHROME_URL"
-          unzip chrome.zip
-          mv chromedriver-*/chromedriver assets/chromedriver
-          chmod +x assets/chromedriver
+          unzip chrome-headless-shell-mac-arm64.zip
+          mv chrome-headless-shell-mac-arm64 assets/chrome-headless-shell
+          chmod +x assets/chrome-headless-shell/chrome-headless-shell
           
       ############################################
       # MACOS: Build .app bundle & .dmg
@@ -99,10 +99,14 @@ jobs:
 
           mkdir -p $APP/Contents/MacOS
           mkdir -p $APP/Contents/Resources
+          mkdir -p $APP/Contents/Resources/assets
 
           # Binary
           cp bibletool-bin $APP/Contents/MacOS/bibletool
           chmod +x $APP/Contents/MacOS/bibletool
+
+          # assets
+          cp -R assets/chrome-headless-shell $APP/Contents/Resources/assets/
 
           # Info.plist
           cp Info.plist $APP/Contents/
@@ -113,7 +117,7 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
-          cp .env $APP/Contents/MacOS/ || true
+          cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
 
       - name: Create DMG
         if: runner.os == 'macOS'
