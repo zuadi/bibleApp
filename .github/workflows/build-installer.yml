@@ -120,12 +120,9 @@ jobs:
 
           # .env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
-            echo ".env found, copying into app bundle"
             cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
           else
             echo ".env not found, skipping"
-            echo "Contents of workspace:"
-            ls -a "${GITHUB_WORKSPACE}"
           fi
 
       - name: Create DMG
