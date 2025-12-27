@@ -81,7 +81,7 @@ jobs:
 
           if [[ "${{ matrix.arch }}" == "arm64" ]]; then
             CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-arm64/chromedriver-mac-arm64.zip"
-         fi
+          fi
 
           curl -L -o chrome.zip "$CHROME_URL"
           unzip chrome.zip
