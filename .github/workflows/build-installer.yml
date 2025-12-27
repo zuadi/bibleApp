@@ -37,7 +37,7 @@ jobs:
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             go build -ldflags "-H=windowsgui" -o bibletool.exe .
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            GOOS=darwin GOARCH=${{ matrix.arch }} go build -o bibletool .
+            GOOS=darwin GOARCH=${{ matrix.arch }} go build -o bibletool-bin .
           else
             go build -o bibletool-bin .
           fi
