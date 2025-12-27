@@ -138,10 +138,17 @@ jobs:
           if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
             cat ${GITHUB_WORKSPACE}/.env
             cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
-            cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/MacOS/"
             echo ".env copied into app bundle"
           else
               echo ".env not found, skipping"
+          fi
+          # env files go into MacOS
+          if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
+            cat ${GITHUB_WORKSPACE}/env
+            cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/MacOS/"
+            echo "env copied into app bundle"
+          else
+              echo "env not found, skipping"
           fi
 
       - name: Create DMG
