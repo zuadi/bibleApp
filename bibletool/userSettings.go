@@ -1,35 +1,37 @@
 package bibletool
 
 import (
-	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
-	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 func (bt *Bibletool) LoadUserSettings() error {
 	bt.config = &models.Config{}
 
-	path := env.ConfigFile.GetValue()
-	bt.DebugLog("NewBibletool", "load user setting from file "+path)
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return err
+	}
 
-	if _, err := os.Stat(path); err == nil {
-		raw, err := os.ReadFile(path)
+	appDir := filepath.Join(configDir, bt.AppName)
+	os.MkdirAll(appDir, 0755)
+
+	configFile := filepath.Join(appDir, "config.json")
+	bt.DebugLog("NewBibletool", "load user setting from file "+configFile)
+
+	if _, err := os.Stat(configFile); err == nil {
+		raw, err := os.ReadFile(configFile)
 		if err != nil {
 			bt.LogError("load user settings", err)
 			return err
 		}
-		buffer := bytes.NewBuffer(raw)
-		dec := gob.NewDecoder(buffer)
-		err = dec.Decode(&bt.config)
+		err = json.Unmarshal(raw, &bt.config)
 		if err != nil {
-			if err.Error() == "EOF" {
-				return nil
-			}
-			bt.LogError("load user settings", err)
+			bt.LogError("json unmarshal user config", err)
 			return err
 		}
 	}
@@ -37,17 +39,22 @@ func (bt *Bibletool) LoadUserSettings() error {
 }
 
 func (bt *Bibletool) SaveUserSettings() error {
-	path := env.ConfigFile.GetValue()
-	bt.DebugLog("SaveUserSettings", "save user setting to file "+path)
-
-	buffer := new(bytes.Buffer)
-	encoder := gob.NewEncoder(buffer)
-	err := encoder.Encode(*bt.config)
+	configDir, err := os.UserConfigDir()
 	if err != nil {
-		bt.LogError("save user config", err)
 		return err
 	}
-	err = os.WriteFile(path, buffer.Bytes(), 0644)
+
+	appDir := filepath.Join(configDir, bt.AppName)
+	os.MkdirAll(appDir, 0755)
+
+	configFile := filepath.Join(appDir, "config.json")
+
+	b, err := json.Marshal(bt.config)
+	if err != nil {
+		bt.LogError("json marshal user config", err)
+		return err
+	}
+	err = os.WriteFile(configFile, b, 0644)
 	if err != nil {
 		bt.LogError("save user config", err)
 		return err

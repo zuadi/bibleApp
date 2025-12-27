@@ -33,10 +33,6 @@ func main() {
 		panic(err)
 	}
 
-	bt.DebugLog("main", "read app name")
-	appName := env.AppName.GetValue()
-	bt.DebugLog("main", appName)
-
 	bt.DebugLog("main", "initiate new fyne app")
 
 	// make new fyne app
@@ -72,11 +68,11 @@ func main() {
 	}
 
 	bt.DebugLog("main", "build main window")
-	mainWindow := wb.BuildMainWindow(app, appName)
+	mainWindow := wb.BuildMainWindow(app, bt.AppName)
 
 	var openWindow bool
 	bt.DebugLog("main", "build warning dialog window")
-	warningDialog := wb.BuildDialogWindow(app, appName)
+	warningDialog := wb.BuildDialogWindow(app, bt.AppName)
 	warningDialog.SetOnClosed(func() { openWindow = false })
 
 	bt.DebugLog("main", "initiate fyne progress bars")
@@ -84,7 +80,7 @@ func main() {
 	progress := widget.NewProgressBar()
 	//progressbar for pdf generating
 	bt.DebugLog("main", "pdf progress window")
-	pdfProgressWindow := wb.BuildPdfProgressWindow(app, appName)
+	pdfProgressWindow := wb.BuildPdfProgressWindow(app, bt.AppName)
 
 	// start translating when 'translation' button pressed
 	wb.Translate = func() {
@@ -163,7 +159,7 @@ func main() {
 			bt.SetVerses(wb.GetVerseEntries())
 			//progressbar
 			fyne.Do(func() {
-				mainProgressWindow := wb.BuildMainProgressWindow(app, appName,
+				mainProgressWindow := wb.BuildMainProgressWindow(app, bt.AppName,
 					widget.NewLabel("Translating for you:"),
 					widget.NewLabel("In progress..."),
 					docprogress,

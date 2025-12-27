@@ -14,6 +14,7 @@ import (
 )
 
 type Bibletool struct {
+	AppName          string
 	config           *models.Config
 	Logger           *logging.Logger
 	OutputDir        string
@@ -34,9 +35,18 @@ func NewBibletool() (bt *Bibletool, err error) {
 		bt.LogError("load enviroment variables", err)
 	}
 
+	bt.DebugLog("main", "read app name")
+	bt.AppName = env.AppName.GetValue()
+	bt.DebugLog("main", bt.AppName)
+
 	logConfig := logging.DefaultConfig()
 	logConfig.Debug = strings.ToLower(env.Debug.GetValue()) == "true" || env.Debug.GetValue() == "1"
-	bt.Logger, err = logging.NewLogger("", logConfig)
+
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return nil, err
+	}
+	bt.Logger, err = logging.NewLogger(filepath.Join(configDir, bt.AppName+".log"), logConfig)
 	if err != nil {
 		return nil, err
 	}
