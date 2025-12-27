@@ -4,6 +4,7 @@ import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
 	"encoding/csv"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,7 +33,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 
 	//load enviroment variables
 	if err := env.Load(".env"); err != nil {
-		bt.LogError("load enviroment variables", err)
+		fmt.Println("load enviroment variables", err)
 	}
 
 	logConfig := logging.DefaultConfig()
@@ -48,7 +49,7 @@ func NewBibletool() (bt *Bibletool, err error) {
 	if err != nil {
 		return nil, err
 	}
-	bt.Logger, err = logging.NewLogger(filepath.Join(configDir, bt.AppName+".log"), logConfig)
+	bt.Logger, err = logging.NewLogger(filepath.Join(configDir, bt.AppName, bt.AppName+".log"), logConfig)
 	if err != nil {
 		return nil, err
 	}
