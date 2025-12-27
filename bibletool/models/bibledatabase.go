@@ -1,10 +1,11 @@
 package models
 
 import (
-	"C"
 	"database/sql"
 	"fmt"
+	"net/url"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	_ "modernc.org/sqlite"
@@ -17,12 +18,11 @@ type BibleDatabase struct {
 func NewBibleDatabase(filepath string) (bd *BibleDatabase, err error) {
 	bd = &BibleDatabase{}
 	//open sqlite file
-	bd.database, err = sql.Open("sqlite", getTranlationDBPath(filepath)+"?mode=ro")
+	uri, err := getTranlationDBPath(filepath)
 	if err != nil {
 		return nil, err
 	}
-	// Force classic journal mode
-	_, err = bd.database.Exec(`PRAGMA journal_mode=DELETE;`)
+	bd.database, err = sql.Open("sqlite", uri+"?mode=ro&_journal_mode=DELETE")
 	if err != nil {
 		return nil, err
 	}
@@ -87,6 +87,23 @@ func (bd *BibleDatabase) GetVerse(bookNumber, chapterNumber, verseNumber int) (t
 	return
 }
 
-func getTranlationDBPath(translation string) string {
-	return filepath.Join("bibles", translation+".SQLite3")
+func getTranlationDBPath(translation string) (string, error) {
+	absPath, err := filepath.Abs(filepath.Join("bibles", translation+".SQLite3"))
+	if err != nil {
+		return "", err
+	}
+
+	slashPath := filepath.ToSlash(absPath)
+
+	if runtime.GOOS == "windows" {
+		slashPath = "/" + slashPath
+	}
+
+	u := &url.URL{
+		Scheme:   "file",
+		Path:     slashPath,
+		RawQuery: "mode=ro&immutable=1",
+	}
+
+	return u.String(), nil
 }

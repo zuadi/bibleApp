@@ -17,7 +17,6 @@ import (
 )
 
 func main() {
-
 	// This function is a bibletranslation help that there can be a main translation choosen and the desired verses entered.
 	// it will create a txt and pdf file of each translation or a combined file with all translation.
 	// it checks if verse exists in main translation and if not give out the not found verses
