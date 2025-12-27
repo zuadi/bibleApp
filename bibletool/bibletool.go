@@ -35,12 +35,14 @@ func NewBibletool() (bt *Bibletool, err error) {
 		bt.LogError("load enviroment variables", err)
 	}
 
-	bt.DebugLog("main", "read app name")
-	bt.AppName = env.AppName.GetValue()
-	bt.DebugLog("main", bt.AppName)
-
 	logConfig := logging.DefaultConfig()
 	logConfig.Debug = strings.ToLower(env.Debug.GetValue()) == "true" || env.Debug.GetValue() == "1"
+
+	// get app name
+	bt.AppName = env.AppName.GetValue()
+	if bt.AppName == "" {
+		bt.AppName = "Bibletool"
+	}
 
 	configDir, err := os.UserConfigDir()
 	if err != nil {
