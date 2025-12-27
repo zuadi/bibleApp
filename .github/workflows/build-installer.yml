@@ -47,19 +47,21 @@ jobs:
       ############################################
       # WINDOWS: Download & Extract Chrome Headless Shell
       ############################################
-      - name: Download Chrome Headless Shell (Windows)
+      - name: Download & Extract Chrome Headless Shell (Windows)
         if: runner.os == 'Windows'
+        shell: powershell
         run: |
-          mkdir -p assets
-          curl -L -o chrome-headless-shell-win64.zip \
-            https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip
+          New-Item -ItemType Directory -Force assets | Out-Null
 
-      - name: Extract Chrome Headless Shell to assets
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          unzip chrome-headless-shell-win64.zip
-          mv chrome-headless-shell-win64 assets/chrome-headless-shell
+          $zip = "chrome-headless-shell-win64.zip"
+          $url = "https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip"
+
+          Invoke-WebRequest -Uri $url -OutFile $zip
+
+          Expand-Archive -Force $zip assets
+
+          Rename-Item assets\chrome-headless-shell-win64 assets\chrome-headless-shell
+
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
