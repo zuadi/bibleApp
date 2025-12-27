@@ -39,7 +39,7 @@ jobs:
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             GOOS=darwin GOARCH=${{ matrix.arch }} go build -o bibletool .
           else
-            go build -o bibletool .
+            go build -o bibletool-bin .
           fi
         shell: bash
 
@@ -102,7 +102,7 @@ jobs:
           mkdir -p $APP/Contents/Resources
 
           # Binary
-          cp bibletool $APP/Contents/MacOS/
+          cp bibletool-bin $APP/Contents/MacOS/bibletool
           chmod +x $APP/Contents/MacOS/bibletool
 
           # Info.plist
