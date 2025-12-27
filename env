@@ -1,0 +1,8 @@
+DEBUG=false
+CHROME_PATH=assets
+APP_NAME=Bibletool
+OOUTPUT_DIR=
+ICON_FILE="pics/pottershouse.png"
+BIBLEINDEX_FILE="cfg/Bibleindex.csv"
+CONFIG_FILE=config
+HTML_TEMPLATE_FILE="cfg/html.tmpl"
