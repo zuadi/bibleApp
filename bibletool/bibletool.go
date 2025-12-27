@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -33,7 +34,12 @@ func NewBibletool() (bt *Bibletool, err error) {
 	bt = &Bibletool{}
 
 	//load enviroment variables
-	if err := env.Load(utils.GetDistOsPath(".env")); err != nil {
+	path := ".env"
+	if runtime.GOOS == "darwin" {
+		path = "env"
+	}
+
+	if err := env.Load(utils.GetDistOsPath(path)); err != nil {
 		fmt.Println("load enviroment variables", err)
 	}
 

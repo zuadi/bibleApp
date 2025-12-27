@@ -61,26 +61,25 @@ jobs:
           # remove old zip if exists
           if (Test-Path $zip) { Remove-Item $zip -Force }
 
-          # download the zip
-          Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
+          # download the zip with silent progress
+          Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing -MaximumRedirection 5 -Verbose:$false
 
           # extract directly into a temp folder
           $temp = "temp-chrome"
           if (Test-Path $temp) { Remove-Item -Recurse -Force $temp }
           Expand-Archive -Path $zip -DestinationPath $temp
 
-          # move the contents directly into assets
+          # move contents directly into assets
           Get-ChildItem -Path $temp | ForEach-Object {
               Move-Item -Path $_.FullName -Destination $assets -Force
           }
 
-          # remove temp folder and zip
+          # cleanup
           Remove-Item -Recurse -Force $temp
           Remove-Item -Force $zip
 
           # make all files writable
           Get-ChildItem $assets -Recurse | ForEach-Object { $_.Attributes = 'Normal' }
-
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
@@ -138,10 +137,10 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
-          ls -a
-          if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
-            cat ${GITHUB_WORKSPACE}/.env
-            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/Resources/"
+          if [[ -f ".env" ]]; then
+            cat .env
+            cp ".env" "$APP/Contents/MacOS/"
+            cp "env" "$APP/Contents/MacOS/"
             echo ".env copied into app bundle"
           else
               echo ".env not found, skipping"
