@@ -14,11 +14,12 @@ jobs:
           - os: windows-latest
             arch: amd64
 
-          - os: macos-latest
-            arch: amd64   # Intel Mac
+          - os: macos-13   # Intel runner
+            arch: amd64
 
-          - os: macos-latest
-            arch: arm64   # Apple Silicon
+          - os: macos-14   # Apple Silicon runner
+            arch: arm64
+
 
     steps:
       - name: Checkout repository
