@@ -5,3 +5,5 @@ config
 assets
 *-shm
 *-wal
+.DS_Store
+*.app
