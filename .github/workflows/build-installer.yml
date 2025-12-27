@@ -51,17 +51,27 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          New-Item -ItemType Directory -Force assets | Out-Null
+          # create target assets folder
+          $assets = "assets"
+          New-Item -ItemType Directory -Force $assets | Out-Null
 
+          # download zip
           $zip = "chrome-headless-shell-win64.zip"
           $url = "https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip"
-
           Invoke-WebRequest -Uri $url -OutFile $zip
 
-          Expand-Archive -Force $zip assets
+          # extract to temp folder
+          $temp = "temp-chrome"
+          Expand-Archive -Force $zip $temp
 
-          Rename-Item assets\chrome-headless-shell-win64 assets\chrome-headless-shell
+          # copy the contents of the extracted folder directly into assets
+          Copy-Item -Path "$temp\*" -Destination $assets -Recurse -Force
 
+          # remove temp folder
+          Remove-Item -Recurse -Force $temp
+
+          # optional: make binaries writable
+          Get-ChildItem $assets -Recurse | ForEach-Object { $_.Attributes = 'Normal' }
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
@@ -108,7 +118,7 @@ jobs:
           chmod +x $APP/Contents/MacOS/bibletool
 
           # assets
-          cp -R assets/chrome-headless-shell $APP/Contents/Resources/assets/
+          cp -R assets/chrome-headless-shell/* $APP/Contents/Resources/assets/
 
           # Info.plist
           cp Info.plist $APP/Contents/
@@ -120,9 +130,10 @@ jobs:
 
           # .env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
-            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
+            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/Resources/"
+            echo ".env copied into app bundle"
           else
-            echo ".env not found, skipping"
+              echo ".env not found, skipping"
           fi
 
       - name: Create DMG
