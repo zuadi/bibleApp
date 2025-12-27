@@ -21,11 +21,11 @@ func NewBibleDatabase(filepath string) (bd *BibleDatabase, err error) {
 	if err != nil {
 		return nil, err
 	}
-	// 	// Force classic journal mode
-	// _, err = db.Exec(`PRAGMA journal_mode=DELETE;`)
-	// if err != nil {
-	//     return err
-	// }
+	// Force classic journal mode
+	_, err = bd.database.Exec(`PRAGMA journal_mode=DELETE;`)
+	if err != nil {
+		return nil, err
+	}
 	return bd, nil
 }
 
