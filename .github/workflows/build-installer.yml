@@ -51,27 +51,36 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          # create target assets folder
           $assets = "assets"
-          New-Item -ItemType Directory -Force $assets | Out-Null
+          # ensure the assets folder exists
+          if (!(Test-Path $assets)) { New-Item -ItemType Directory -Force $assets | Out-Null }
 
-          # download zip
           $zip = "chrome-headless-shell-win64.zip"
           $url = "https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $zip
 
-          # extract to temp folder
+          # remove old zip if exists
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+
+          # download the zip
+          Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
+
+          # extract directly into a temp folder
           $temp = "temp-chrome"
-          Expand-Archive -Force $zip $temp
+          if (Test-Path $temp) { Remove-Item -Recurse -Force $temp }
+          Expand-Archive -Path $zip -DestinationPath $temp
 
-          # copy the contents of the extracted folder directly into assets
-          Copy-Item -Path "$temp\*" -Destination $assets -Recurse -Force
+          # move the contents directly into assets
+          Get-ChildItem -Path $temp | ForEach-Object {
+              Move-Item -Path $_.FullName -Destination $assets -Force
+          }
 
-          # remove temp folder
+          # remove temp folder and zip
           Remove-Item -Recurse -Force $temp
+          Remove-Item -Force $zip
 
-          # optional: make binaries writable
+          # make all files writable
           Get-ChildItem $assets -Recurse | ForEach-Object { $_.Attributes = 'Normal' }
+
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
@@ -129,7 +138,9 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
+          ls -a
           if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
+            cat ${GITHUB_WORKSPACE}/.env
             cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/Resources/"
             echo ".env copied into app bundle"
           else
