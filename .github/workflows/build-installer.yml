@@ -49,37 +49,35 @@ jobs:
       ############################################
       - name: Download & Extract Chrome Headless Shell (Windows)
         if: runner.os == 'Windows'
-        shell: powershell
+        shell: bash
         run: |
-          $assets = "assets"
-          # ensure the assets folder exists
-          if (!(Test-Path $assets)) { New-Item -ItemType Directory -Force $assets | Out-Null }
+          set -e
 
-          $zip = "chrome-headless-shell-win64.zip"
-          $url = "https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip"
+          ASSETS="assets"
+          ZIP="chrome-headless-shell-win64.zip"
+          TEMP="temp-chrome"
 
-          # remove old zip if exists
-          if (Test-Path $zip) { Remove-Item $zip -Force }
+          # create assets folder
+          mkdir -p "$ASSETS"
 
-          # download the zip with silent progress
-          Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing -MaximumRedirection 5 -Verbose:$false
+          # remove old files
+          rm -f "$ZIP"
+          rm -rf "$TEMP"
 
-          # extract directly into a temp folder
-          $temp = "temp-chrome"
-          if (Test-Path $temp) { Remove-Item -Recurse -Force $temp }
-          Expand-Archive -Path $zip -DestinationPath $temp
+          # download zip
+          curl -L -o "$ZIP" "https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/win64/chrome-headless-shell-win64.zip"
 
-          # move contents directly into assets
-          Get-ChildItem -Path $temp | ForEach-Object {
-              Move-Item -Path $_.FullName -Destination $assets -Force
-          }
+          # unzip to temp
+          unzip "$ZIP" -d "$TEMP"
+
+          # move contents to assets directly (no subfolder)
+          mv "$TEMP"/*/* "$ASSETS/"
 
           # cleanup
-          Remove-Item -Recurse -Force $temp
-          Remove-Item -Force $zip
+          rm -rf "$TEMP" "$ZIP"
 
-          # make all files writable
-          Get-ChildItem $assets -Recurse | ForEach-Object { $_.Attributes = 'Normal' }
+          # make binaries writable
+          chmod -R +w "$ASSETS"
 
       ############################################
       # WINDOWS: Build Inno Setup Installer
@@ -137,7 +135,7 @@ jobs:
           cp -R pics $APP/Contents/Resources/
 
           # .env files go into MacOS
-          if [[ -f ".${GITHUB_WORKSPACE}/.env" ]]; then
+          if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
             cat ${GITHUB_WORKSPACE}/.env
             cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
             cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/MacOS/"
