@@ -96,6 +96,7 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 	documentName := maintranslation.GetTranslationName()
 
 	bt.DebugLog("WriteHtmlfile", "write tmpl html file "+documentName)
+
 	err := bt.WriteHtml(filepath.Join(bt.OutputDir, "html", documentName+".html"), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
 		SermonTitle:         bt.GetSermonTitle(),

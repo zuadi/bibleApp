@@ -68,13 +68,11 @@ func NewBibletool() (bt *Bibletool, err error) {
 	}
 	bt.DebugLog("NewBibletool", bt.OutputDir)
 
-	workingDir, err := os.Getwd()
+	//set icon path for html template
+	bt.AbsIconPath, err = filepath.Abs(utils.GetDistOsPath(env.IconPath.GetValue()))
 	if err != nil {
 		return nil, err
 	}
-
-	//set icon path for html template
-	bt.AbsIconPath = filepath.Join(workingDir, env.IconPath.GetValue())
 
 	//read config if file exists
 	err = bt.LoadUserSettings()

@@ -10,8 +10,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [windows-latest, macos-latest]
-        os: [windows-latest]
+        include:
+          - os: windows-latest
+            arch: amd64
+
+          - os: macos-latest
+            arch: amd64   # Intel Mac
+
+          - os: macos-latest
+            arch: arm64   # Apple Silicon
 
     steps:
       - name: Checkout repository
@@ -28,6 +35,8 @@ jobs:
         run: |
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             go build -ldflags "-H=windowsgui" -o bibletool.exe .
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            GOOS=darwin GOARCH=${{ matrix.arch }} go build -o bibletool .
           else
             go build -o bibletool .
           fi
@@ -61,29 +70,59 @@ jobs:
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "InnoSetupConfigFile.iss"
 
       ############################################
+      # MACOS: Download Chrome Driver (per arch)
+      ############################################
+      - name: Download Chrome Driver (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p assets
+
+          if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+            CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-arm64/chromedriver-mac-arm64.zip"
+          else
+            CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/mac-x64/chromedriver-mac-x64.zip"
+          fi
+
+          curl -L -o chrome.zip "$CHROME_URL"
+          unzip chrome.zip
+          mv chromedriver-* assets/chromedriver
+          chmod +x assets/chromedriver
+          
+      ############################################
       # MACOS: Build .app bundle & .dmg
       ############################################
       
       - name: Make macOS .app bundle
         if: runner.os == 'macOS'
         run: |
-          mkdir -p Bibletool.app/Contents/MacOS
-          mkdir -p Bibletool.app/Contents/Resources
-      
-          # Copy Go binary
-          cp bibletool Bibletool.app/Contents/MacOS/
-          chmod +x Bibletool.app/Contents/MacOS/bibletool
-      
-          # 👉 Copy bibles + cfg files/folders
-          cp -R bibles Bibletool.app/Contents/Resources/
-          cp -R cfg Bibletool.app/Contents/Resources/
-      
+          APP="Bibletool.app"
+
+          mkdir -p $APP/Contents/MacOS
+          mkdir -p $APP/Contents/Resources
+
+          # Binary
+          cp bibletool $APP/Contents/MacOS/
+          chmod +x $APP/Contents/MacOS/bibletool
+
+          # Info.plist
+          cp Info.plist $APP/Contents/
+
+          # Resources
+          cp -R bibles $APP/Contents/Resources/
+          cp -R cfg $APP/Contents/Resources/
+          cp -R pics $APP/Contents/Resources/
+
+          # .env files go into MacOS
+          cp *.env $APP/Contents/MacOS/ || true
+
       - name: Create DMG
         if: runner.os == 'macOS'
         run: |
           hdiutil create -volname "Bibletool" \
             -srcfolder Bibletool.app \
-            -ov -format UDZO bibletool.dmg
+            -ov -format UDZO \
+            bibletool-macos-${{ matrix.arch }}.dmg
+
 
       ############################################
       # Upload Artifacts for each OS
@@ -99,9 +138,9 @@ jobs:
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-Bibletool
+          name: macOS-Bibletool-${{ matrix.arch }}
           path: |
-            bibletool
             Bibletool.app
-            bibletool.dmg
+            bibletool-macos-${{ matrix.arch }}.dmg
+
 
