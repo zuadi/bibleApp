@@ -40,7 +40,7 @@ Source: ".\bibles\*"; DestDir: "{app}\bibles"; Flags: ignoreversion recursesubdi
 Source: ".\cfg\*"; DestDir: "{app}\cfg"; Flags: ignoreversion recursesubdirs
 Source: ".\font\*"; DestDir: "{app}\font"; Flags: ignoreversion recursesubdirs
 Source: ".\pics\*"; DestDir: "{app}\pics"; Flags: ignoreversion recursesubdirs
-Source: "assets\chrome-headless-shell\*"; DestDir: "{app}\assets"; Flags: recursesubdirs createallsubdirs ignoreversion
+Source: "assets\*"; DestDir: "{app}\assets"; Flags: recursesubdirs createallsubdirs ignoreversion
 Source: ".\doc\Bibletool User Manual.pdf"; DestDir: "{app}\hlp"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
