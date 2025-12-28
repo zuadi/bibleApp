@@ -183,20 +183,6 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           DMG_NAME="installBibletool-macos-${{ matrix.arch }}.dmg"
-          STAGING="dmg-staging"
-          APP="installBibletool.app"
-
-          # clean previous
-          rm -rf "$STAGING" "$DMG_NAME"
-
-          # create staging folder
-          mkdir -p "$STAGING"
-
-          # copy app
-          cp -R "$APP" "$STAGING/"
-
-          # create Applications symlink
-          ln -s /Applications "$STAGING/Applications"
 
           # create DMG
           hdiutil create \
