@@ -142,14 +142,16 @@ jobs:
           else
               echo ".env not found, skipping"
           fi
-          # env files go into MacOS
+          # copy env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
-            cat ${GITHUB_WORKSPACE}/env
             cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/Resources/"
             echo "env copied into app bundle"
           else
               echo "env not found, skipping"
           fi
+
+          # copy icon files go into MacOS
+          cp "${GITHUB_WORKSPACE}/pottershouse.icns" "$APP/Contents/Resources/"
 
       - name: Fix quarantine & sign macOS app
         if: runner.os == 'macOS'
