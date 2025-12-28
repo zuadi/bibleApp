@@ -29,7 +29,9 @@ func MkDirs(root string, subfolder ...string) error {
 
 func GetDistOsPath(path string) string {
 	if runtime.GOOS == "darwin" {
-		return filepath.Join("..", "Resources", path)
+		exe, _ := os.Executable()
+
+		return filepath.Join(exe, "..", "Resources", path)
 	}
 	return path
 }

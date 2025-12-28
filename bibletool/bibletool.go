@@ -36,7 +36,8 @@ func NewBibletool() (bt *Bibletool, err error) {
 	//load enviroment variables
 	path := ".env"
 	if runtime.GOOS == "darwin" {
-		path = "env"
+		exe, _ := os.Executable()
+		path = filepath.Join(exe, "env")
 	}
 
 	if err := env.Load(path); err != nil {
