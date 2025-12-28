@@ -119,7 +119,6 @@ jobs:
           mkdir -p $APP/Contents/MacOS
           mkdir -p $APP/Contents/Resources
           mkdir -p $APP/Contents/Resources/assets
-          chmod +x installApp.sh
           
           # Binary
           cp bibletool-bin $APP/Contents/MacOS/bibletool
@@ -169,6 +168,15 @@ jobs:
             -ov -format UDZO \
             bibletool-macos-${{ matrix.arch }}.dmg
 
+      - name: Fix quarantine & sign macOS app
+        if: runner.os == 'macOS'
+        run: |
+          xattr -dr com.apple.quarantine Bibletool.app
+          codesign --force --deep --sign - Bibletool.app
+          xattr -dr com.apple.quarantine bibletool-macos-${{ matrix.arch }}.dmg
+          
+          
+
 
       ############################################
       # Upload Artifacts for each OS
@@ -186,9 +194,9 @@ jobs:
         with:
           name: macOS-Bibletool-${{ matrix.arch }}
           path: |
-            installApp.sh
             Bibletool.app
             bibletool-macos-${{ matrix.arch }}.dmg
+
 
 
 
