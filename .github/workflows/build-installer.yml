@@ -165,7 +165,7 @@ jobs:
           chmod +x $APP/Contents/MacOS/installBibletool
 
           # Resources
-          cp Bibletool.app $APP/Contents/Resources/
+          cp -R Bibletool.app $APP/Contents/Resources/
 
           # Info.plist
           cp mac/installBibletool/Info.plist $APP/Contents/
