@@ -137,7 +137,7 @@ jobs:
           # .env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
             cat ${GITHUB_WORKSPACE}/.env
-            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/MacOS/"
+            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/Resources/"
             echo ".env copied into app bundle"
           else
               echo ".env not found, skipping"
@@ -145,7 +145,7 @@ jobs:
           # env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
             cat ${GITHUB_WORKSPACE}/env
-            cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/MacOS/"
+            cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/Resources/"
             echo "env copied into app bundle"
           else
               echo "env not found, skipping"
@@ -156,7 +156,7 @@ jobs:
         run: |
           xattr -dr com.apple.quarantine Bibletool.app
           codesign --force --deep --sign - Bibletool.app
-          
+
       - name: Create DMG
         if: runner.os == 'macOS'
         run: |

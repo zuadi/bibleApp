@@ -11,5 +11,7 @@
     <string>bibletool</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleIconFile</key>
+    <string>pottershouse</string>
 </dict>
 </plist>
