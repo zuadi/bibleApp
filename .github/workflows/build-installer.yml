@@ -185,12 +185,10 @@ jobs:
           DMG_NAME="installBibletool-macos-${{ matrix.arch }}.dmg"
 
           # create DMG
-          hdiutil create \
-            -volname "installBibletool" \
-            -srcfolder "$STAGING" \
-            -ov \
-            -format UDZO \
-            "$DMG_NAME"
+          hdiutil create -volname "installBibletool" \
+          -srcfolder installBibletool.app \
+          -ov -format UDZO \
+          "$DMG_NAME"
 
       ############################################
       # Upload Artifacts for each OS
