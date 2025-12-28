@@ -1,3 +1,4 @@
+
 name: Build Go App and Installers
 
 on: 
@@ -109,7 +110,7 @@ jobs:
       ############################################
       # MACOS: Build .app bundle & .dmg
       ############################################
-      
+        
       - name: Make macOS .app bundle
         if: runner.os == 'macOS'
         run: |
@@ -118,7 +119,8 @@ jobs:
           mkdir -p $APP/Contents/MacOS
           mkdir -p $APP/Contents/Resources
           mkdir -p $APP/Contents/Resources/assets
-
+          chmod +x installApp.sh
+          
           # Binary
           cp bibletool-bin $APP/Contents/MacOS/bibletool
           chmod +x $APP/Contents/MacOS/bibletool
@@ -184,7 +186,9 @@ jobs:
         with:
           name: macOS-Bibletool-${{ matrix.arch }}
           path: |
+            installApp.sh
             Bibletool.app
             bibletool-macos-${{ matrix.arch }}.dmg
+
 
 
