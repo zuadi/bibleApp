@@ -163,20 +163,29 @@ jobs:
       - name: Create DMG
         if: runner.os == 'macOS'
         run: |
-          hdiutil create -volname "Bibletool" \
-            -srcfolder Bibletool.app \
-            -ov -format UDZO \
-            bibletool-macos-${{ matrix.arch }}.dmg
+          DMG_NAME="bibletool-macos-${{ matrix.arch }}.dmg"
+          STAGING="dmg-staging"
+          APP="Bibletool.app"
 
-      - name: Fix quarantine & sign macOS app
-        if: runner.os == 'macOS'
-        run: |
-          xattr -dr com.apple.quarantine Bibletool.app
-          codesign --force --deep --sign - Bibletool.app
-          xattr -dr com.apple.quarantine bibletool-macos-${{ matrix.arch }}.dmg
-          
-          
+          # clean previous
+          rm -rf "$STAGING" "$DMG_NAME"
 
+          # create staging folder
+          mkdir -p "$STAGING"
+
+          # copy app
+          cp -R "$APP" "$STAGING/"
+
+          # create Applications symlink
+          ln -s /Applications "$STAGING/Applications"
+
+          # create DMG
+          hdiutil create \
+            -volname "Bibletool" \
+            -srcfolder "$STAGING" \
+            -ov \
+            -format UDZO \
+            "$DMG_NAME"
 
       ############################################
       # Upload Artifacts for each OS
