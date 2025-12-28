@@ -128,21 +128,13 @@ jobs:
           cp -R assets/chrome-headless-shell/* $APP/Contents/Resources/assets/
 
           # Info.plist
-          cp Info.plist $APP/Contents/
+          cp mac/bibleTool/Info.plist $APP/Contents/
 
           # Resources
           cp -R bibles $APP/Contents/Resources/
           cp -R cfg $APP/Contents/Resources/
           cp -R pics $APP/Contents/Resources/
 
-          # .env files go into MacOS
-          if [[ -f "${GITHUB_WORKSPACE}/.env" ]]; then
-            cat ${GITHUB_WORKSPACE}/.env
-            cp "${GITHUB_WORKSPACE}/.env" "$APP/Contents/Resources/"
-            echo ".env copied into app bundle"
-          else
-              echo ".env not found, skipping"
-          fi
           # copy env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
             cp "${GITHUB_WORKSPACE}/env" "$APP/Contents/Resources/"
@@ -154,18 +146,45 @@ jobs:
           # copy icon files go into MacOS
           cp "${GITHUB_WORKSPACE}/pottershouse.icns" "$APP/Contents/Resources/"
 
-      - name: Fix quarantine & sign macOS app
+      - name: Fix quarantine & sign macOS bibletool app
         if: runner.os == 'macOS'
         run: |
           xattr -dr com.apple.quarantine Bibletool.app
           codesign --force --deep --sign - Bibletool.app
 
+      - name: Make macOS install .app bundle
+        if: runner.os == 'macOS'
+        run: |
+          APP="installBibletool.app"
+
+          mkdir -p $APP/Contents/MacOS
+          mkdir -p $APP/Contents/Resources
+          
+          # Binary
+          cp mac/installBibletool/installBibletool $APP/Contents/MacOS/installBibletool
+          chmod +x $APP/Contents/MacOS/installBibletool
+
+          # Resources
+          cp Bibletool.app $APP/Contents/Resources/
+
+          # Info.plist
+          cp mac/installBibletool/Info.plist $APP/Contents/
+
+          # copy icon files go into MacOS
+          cp "${GITHUB_WORKSPACE}/pottershouse.icns" "$APP/Contents/Resources/"
+
+      - name: Fix quarantine & sign macOS installBibletool app
+        if: runner.os == 'macOS'
+        run: |
+          xattr -dr com.apple.quarantine installBibletool.app
+          codesign --force --deep --sign - installBibletool.app
+
       - name: Create DMG
         if: runner.os == 'macOS'
         run: |
-          DMG_NAME="bibletool-macos-${{ matrix.arch }}.dmg"
+          DMG_NAME="installBibletool-macos-${{ matrix.arch }}.dmg"
           STAGING="dmg-staging"
-          APP="Bibletool.app"
+          APP="installBibletool.app"
 
           # clean previous
           rm -rf "$STAGING" "$DMG_NAME"
@@ -181,7 +200,7 @@ jobs:
 
           # create DMG
           hdiutil create \
-            -volname "Bibletool" \
+            -volname "installBibletool" \
             -srcfolder "$STAGING" \
             -ov \
             -format UDZO \
@@ -203,8 +222,7 @@ jobs:
         with:
           name: macOS-Bibletool-${{ matrix.arch }}
           path: |
-            Bibletool.app
-            bibletool-macos-${{ matrix.arch }}.dmg
+            installBibletool-macos-${{ matrix.arch }}.dmg
 
 
 
