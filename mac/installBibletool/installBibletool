@@ -20,5 +20,7 @@ choice=$(osascript -e 'button returned of (display dialog "Installation is compl
 # Only eject if Yes
 if [ "$choice" = "Yes" ]; then
   DMG_DEVICE=$(df "$APP_DIR" | tail -1 | awk '{print $1}')
-  hdiutil detach "$DMG_DEVICE"
+  ( sleep 2; hdiutil detach "$DMG_DEVICE" ) &
 fi
+
+exit 0
