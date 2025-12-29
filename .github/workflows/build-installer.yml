@@ -106,6 +106,7 @@ jobs:
           unzip chrome-headless-shell-mac-arm64.zip
           mv chrome-headless-shell-mac-arm64 assets/chrome-headless-shell
           chmod +x assets/chrome-headless-shell/chrome-headless-shell
+          codesign --force --sign - assets/chrome-headless-shell/chrome-headless-shell
           
       ############################################
       # MACOS: Build .app bundle & .dmg
