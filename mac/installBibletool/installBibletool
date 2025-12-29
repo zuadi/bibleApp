@@ -10,3 +10,15 @@ SOURCE="$RESOURCES/Bibletool.app"
 osascript <<EOF
 do shell script "cp -R '$SOURCE' '$TARGET' && xattr -dr com.apple.quarantine '$TARGET/Bibletool.app'" with administrator privileges
 EOF
+
+# Launch the app
+open "$TARGET/Bibletool.app"
+
+# Ask whether to eject the DMG
+choice=$(osascript -e 'button returned of (display dialog "Installation is complete. Eject the installer disk now?" with title "Bibletool Installer" buttons {"No", "Yes"} default button "Yes" cancel button "No")')
+
+# Only eject if Yes
+if [ "$choice" = "Yes" ]; then
+  DMG_DEVICE=$(df "$APP_DIR" | tail -1 | awk '{print $1}')
+  hdiutil detach "$DMG_DEVICE"
+fi
