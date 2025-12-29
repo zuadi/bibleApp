@@ -119,6 +119,7 @@ jobs:
           mkdir -p $APP/Contents/MacOS
           mkdir -p $APP/Contents/Resources
           mkdir -p $APP/Contents/Resources/assets
+          mkdir -p $APP/Contents/Resources/font
           
           # Binary
           cp bibletool-bin $APP/Contents/MacOS/bibletool
@@ -132,6 +133,7 @@ jobs:
 
           # Resources
           cp -R bibles $APP/Contents/Resources/
+          cp -R font $APP/Contents/Resources/
           cp -R cfg $APP/Contents/Resources/
           cp -R pics $APP/Contents/Resources/
 
