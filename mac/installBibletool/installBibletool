@@ -12,6 +12,7 @@ do shell script "
   cp -R '$SOURCE' '$TARGET' &&
   chown -R '$USER_NAME':admin '$TARGET/Bibletool.app' &&
   sudo xattr -rd com.apple.quarantine '$TARGET/Bibletool.app'
+" with administrator privileges
 EOF
 
 # Launch the app
