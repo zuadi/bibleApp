@@ -1,6 +1,10 @@
 
 name: Build Go App and Installers
 
+env:
+  APP_NAME: bibletool
+  CHROME_VERSION: 143.0.7499.169
+
 on: 
   push:
     branches: [ "main" ]
@@ -17,6 +21,9 @@ jobs:
 
           - os: macos-14   # Apple Silicon runner
             arch: arm64
+          
+          - os: ubuntu-latest
+            arch: amd64
 
 
     steps:
@@ -35,15 +42,18 @@ jobs:
 
       # Build binaries for each OS
       - name: Build Go binary
-        run: |
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            go build -ldflags "-H=windowsgui -s -w" -o bibletool.exe .
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            go build -ldflags "-s -w" -o bibletool-bin .
-          else
-            go build -ldflags "-s -w" -o bibletool-bin .
-          fi
         shell: bash
+        run: |
+          set -e
+
+          OUT="${APP_NAME}"
+
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            OUT="${APP_NAME}.exe"
+            go build -ldflags "-H=windowsgui -s -w" -o "$OUT" .
+          else
+            go build -ldflags "-s -w" -o "${APP_NAME}-bin" .
+          fi
 
       ############################################
       # WINDOWS: Download & Extract Chrome Headless Shell
@@ -132,10 +142,7 @@ jobs:
           cp mac/bibleTool/Info.plist $APP/Contents/
 
           # Resources
-          cp -R bibles $APP/Contents/Resources/
-          cp -R font $APP/Contents/Resources/
-          cp -R cfg $APP/Contents/Resources/
-          cp -R pics $APP/Contents/Resources/
+          cp -R bibles font cfg pics $APP/Contents/Resources/
 
           # copy env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
@@ -193,6 +200,76 @@ jobs:
           "$DMG_NAME"
 
       ############################################
+      # LINUX: Download Chrome Headless Shell
+      ############################################
+      - name: Download Chrome Headless Shell (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p assets
+
+          curl -L -o chrome-headless-shell-linux64.zip \
+            https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chrome-headless-shell-linux64.zip
+
+          unzip chrome-headless-shell-linux64.zip
+          mv chrome-headless-shell-linux64/chrome-headless-shell assets/
+          chmod +x assets/chrome-headless-shell/chrome-headless-shell
+
+      - name: Install AppImage tools
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fuse libfuse2
+          curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy
+
+      ############################################
+      # LINUX: Build AppImage
+      ############################################
+      - name: Build Linux AppImage
+        if: runner.os == 'Linux'
+        run: |
+          APPDIR=AppDir
+
+          mkdir -p $APPDIR/usr/bin
+          mkdir -p $APPDIR/usr/share/applications
+          mkdir -p $APPDIR/usr/share/icons/hicolor/256x256/apps
+          mkdir -p $APPDIR/usr/share/bibletool
+
+          # binary
+          cp bibletool-bin $APPDIR/usr/bin/bibletool
+          chmod +x $APPDIR/usr/bin/bibletool
+
+          #copy .env
+          cp .env $APPDIR/usr/bin/bibletool
+          
+          # assets
+          cp -R assets $APPDIR/usr/share/bibletool/
+          cp -R bibles font cfg pics $APPDIR/usr/share/bibletool/
+
+          # desktop file
+          cat > $APPDIR/usr/share/applications/bibletool.desktop <<EOF
+          [Desktop Entry]
+          Name=Bibletool
+          Exec=bibletool
+          Icon=bibletool
+          Type=Application
+          Categories=Utility;
+          EOF
+
+          # icon
+          cp pottershouse.png $APPDIR/usr/share/icons/hicolor/256x256/apps/bibletool.png
+
+          # AppRun
+          cat > $APPDIR/AppRun <<EOF
+          #!/bin/sh
+          exec "\$(dirname "\$0")/usr/bin/bibletool"
+          EOF
+          chmod +x $APPDIR/AppRun
+
+          ./linuxdeploy --appdir AppDir --output appimage
+    
+
+      ############################################
       # Upload Artifacts for each OS
       ############################################
       - name: Upload Windows artifacts
@@ -209,6 +286,13 @@ jobs:
           name: macOS-Bibletool-${{ matrix.arch }}
           path: |
             installBibletool-macos-${{ matrix.arch }}.dmg
+
+      - name: Upload Linux artifacts
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux-Bibletool-AppImage
+          path: '*.AppImage'
 
 
 

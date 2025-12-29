@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -29,10 +28,14 @@ func MkDirs(root string, subfolder ...string) error {
 }
 
 func GetDistOsPath(path string) string {
-	if runtime.GOOS == "darwin" {
+	switch runtime.GOOS {
+	case "darwin":
 		exe, _ := os.Executable()
-		fmt.Println(10, exe)
 		return filepath.Join(exe, "..", "..", "Resources", path)
+	case "linux":
+		if appDir := os.Getenv("APPDIR"); appDir != "" {
+			return filepath.Join(appDir, "usr", "share", "bibletool")
+		}
 	}
 	return path
 }
