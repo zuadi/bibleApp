@@ -3,6 +3,7 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
+	"bibletool/utils"
 	"bufio"
 	"fmt"
 	"html/template"
@@ -121,7 +122,7 @@ func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 	var err error
 	var c *converter.Converter
 
-	chromePath := env.ChromePath.GetValue()
+	chromePath := utils.GetDistOsPath(env.ChromePath.GetValue())
 	bt.DebugLog("ConvertToPdf", "open chrome headless shell from "+chromePath)
 	bt.Wg.Go(func() {
 		c, err = html2pdf.NewConverterInstance(chromePath)
