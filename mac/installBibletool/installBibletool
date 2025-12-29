@@ -8,10 +8,10 @@ USER_NAME="$(stat -f "%Su" /dev/console)"
 
 osascript <<EOF
 do shell script "
+  rm -rf '$TARGET/Bibletool.app' &&
   cp -R '$SOURCE' '$TARGET' &&
   chown -R '$USER_NAME':admin '$TARGET/Bibletool.app' &&
-  xattr -dr com.apple.quarantine '$TARGET/Bibletool.app'
-" with administrator privileges
+  sudo xattr -rd com.apple.quarantine '$TARGET/Bibletool.app'
 EOF
 
 # Launch the app
