@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	fyne.io/fyne/v2 v2.7.1
-	gitea.tecamino.com/paadi/html2pdf v0.0.11
+	gitea.tecamino.com/paadi/html2pdf v0.0.12
 	gitea.tecamino.com/paadi/pdfmerge v0.0.4
 	gitea.tecamino.com/paadi/tecamino-logger v1.0.0
 	gitea.tecamino.com/paadi/template-builder v0.0.3

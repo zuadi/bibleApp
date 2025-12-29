@@ -120,14 +120,21 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 	var err error
 	var c *converter.Converter
+	//chrome limiter
+	var chromeLimiter = make(chan struct{}, 2)
 
 	chromePath := env.ChromePath.GetValue()
 	bt.DebugLog("ConvertToPdf", "open chrome headless shell from "+chromePath)
 	bt.Wg.Go(func() {
+
+		chromeLimiter <- struct{}{}
+		defer func() { <-chromeLimiter }()
+
 		c, err = html2pdf.NewConverterInstance(chromePath)
 		if err != nil {
 			bt.LogError("html2pdf", err)
 		}
+		defer c.Close()
 
 		c.SetProgressCallback(bt.PdfProgressAdd)
 
