@@ -19,8 +19,14 @@ choice=$(osascript -e 'button returned of (display dialog "Installation is compl
 
 # Only eject if Yes
 if [ "$choice" = "Yes" ]; then
-  DMG_DEVICE=$(df "$APP_DIR" | tail -1 | awk '{print $1}')
-  ( sleep 2; hdiutil detach "$DMG_DEVICE" ) &
-fi
+  VOLUME_NAME=$(basename "$APP_DIR")
 
-exit 0
+  osascript <<EOF
+tell application "Finder"
+  delay 2
+  if exists disk "$VOLUME_NAME" then
+    eject disk "$VOLUME_NAME"
+  end if
+end tell
+EOF
+fi
