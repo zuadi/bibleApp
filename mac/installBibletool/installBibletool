@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Resolve paths correctly
 APP_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 RESOURCES="$APP_DIR/Contents/Resources"
 TARGET="/Applications"
 SOURCE="$RESOURCES/Bibletool.app"
+USER_NAME="$(stat -f "%Su" /dev/console)"
 
-# Copy + remove quarantine (admin required)
 osascript <<EOF
-do shell script "cp -R '$SOURCE' '$TARGET' && xattr -dr com.apple.quarantine '$TARGET/Bibletool.app'" with administrator privileges
+do shell script "
+  cp -R '$SOURCE' '$TARGET' &&
+  chown -R '$USER_NAME':admin '$TARGET/Bibletool.app' &&
+  xattr -dr com.apple.quarantine '$TARGET/Bibletool.app'
+" with administrator privileges
 EOF
-
-# Launch the app
-open "$TARGET/Bibletool.app"
