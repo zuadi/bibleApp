@@ -37,11 +37,11 @@ jobs:
       - name: Build Go binary
         run: |
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            go build -ldflags "-H=windowsgui" -o bibletool.exe .
+            go build -ldflags "-H=windowsgui -s -w" -o bibletool.exe .
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            go build -o bibletool-bin .
+            go build -ldflags "-s -w" -o bibletool-bin .
           else
-            go build -o bibletool-bin .
+            go build -ldflags "-s -w" -o bibletool-bin .
           fi
         shell: bash
 
