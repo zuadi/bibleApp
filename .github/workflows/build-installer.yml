@@ -1,6 +1,10 @@
 
 name: Build Go App and Installers
 
+env:
+  APP_NAME: bibletool
+  CHROME_VERSION: 143.0.7499.169
+
 on: 
   push:
     branches: [ "main" ]
@@ -18,7 +22,6 @@ jobs:
           - os: macos-14   # Apple Silicon runner
             arch: arm64
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,15 +38,18 @@ jobs:
 
       # Build binaries for each OS
       - name: Build Go binary
-        run: |
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            go build -ldflags "-H=windowsgui -s -w" -o bibletool.exe .
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            go build -ldflags "-s -w" -o bibletool-bin .
-          else
-            go build -ldflags "-s -w" -o bibletool-bin .
-          fi
         shell: bash
+        run: |
+          set -e
+
+          OUT="${APP_NAME}"
+
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            OUT="${APP_NAME}.exe"
+            go build -ldflags "-H=windowsgui -s -w" -trimpath -o "$OUT" .
+          else
+            go build -ldflags "-s -w" -trimpath -o "${APP_NAME}-bin" .
+          fi
 
       ############################################
       # WINDOWS: Download & Extract Chrome Headless Shell
@@ -132,10 +138,7 @@ jobs:
           cp mac/bibleTool/Info.plist $APP/Contents/
 
           # Resources
-          cp -R bibles $APP/Contents/Resources/
-          cp -R font $APP/Contents/Resources/
-          cp -R cfg $APP/Contents/Resources/
-          cp -R pics $APP/Contents/Resources/
+          cp -R bibles font cfg pics $APP/Contents/Resources/
 
           # copy env files go into MacOS
           if [[ -f "${GITHUB_WORKSPACE}/env" ]]; then
@@ -209,7 +212,3 @@ jobs:
           name: macOS-Bibletool-${{ matrix.arch }}
           path: |
             installBibletool-macos-${{ matrix.arch }}.dmg
-
-
-
-
