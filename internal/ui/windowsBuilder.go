@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -187,17 +188,15 @@ func (wb *WindowBuilder) BuildMainWindow(a fyne.App, appName string) fyne.Window
 						widget.NewLabel("Select Translations"),
 						wb.sameDocument,
 					),
-					container.NewCenter(wb.allTranslations),
+					container.NewGridWithColumns(3, container.NewVBox(wb.mainTranslation), wb.allTranslations, widget.NewLabel("Sermontitle:")),
 				),
 				// set 3rd column with
 				container.NewGridWithColumns(3,
-					// set 1st column with main translation
-					container.NewVBox(wb.mainTranslation),
+					layout.NewSpacer(),
 					// set 2nd column translation checkboxes
 					container.NewVScroll(wb.translations),
 					// set 3rd column with sermon title, pastor name and translate button
-					container.NewVBox(container.NewGridWithRows(7,
-						widget.NewLabel("Sermontitle:"),
+					container.NewVBox(container.NewGridWithRows(6,
 						wb.sermonTitle,
 						widget.NewLabel("Name of Pastor:"),
 						wb.pastorName, widget.NewLabel("Output:"), wb.outputSelect),
