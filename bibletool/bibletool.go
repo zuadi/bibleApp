@@ -3,6 +3,7 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
+	"bibletool/internal/ui"
 	"bibletool/utils"
 	"encoding/csv"
 	"fmt"
@@ -111,6 +112,11 @@ func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
 }
 
 func (bt *Bibletool) Close() error {
+	if bt.GetOutputFile() == ui.Pdf {
+		bt.DebugLog("Close", "remove html files ")
+		utils.RemoveAllFileExtenetions(bt.OutputDir, ".html")
+	}
+
 	bt.DebugLog("Close", "open file explorer "+bt.OutputDir)
 	// open file browser of translation
 	if err := open.Run(bt.OutputDir); err != nil {

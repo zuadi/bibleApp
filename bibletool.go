@@ -47,6 +47,7 @@ func main() {
 	wb.SetSameDocument(bt.GetSameDocument())
 	wb.SetPastorName(bt.GetPastor())
 	wb.SetSermonTitle(bt.GetSermonTitle())
+	wb.SetOutputFile(bt.GetOutputFile())
 	wb.SetVerseEntries(bt.GetVerses())
 
 	bt.DebugLog("main", "initiate all callback functions for saving values to config file")
@@ -64,6 +65,11 @@ func main() {
 	//call back for same document settings
 	wb.GetSameDocument = func(set bool) {
 		bt.SetSameDocument(set)
+	}
+
+	//call back for output file
+	wb.GetOutputSelect = func(set string) {
+		bt.SetOutputFile(set)
 	}
 
 	bt.DebugLog("main", "build main window")
@@ -205,7 +211,7 @@ func main() {
 			}
 
 			//check if biletranslation folder exists otherwise create
-			if err := utils.MkDirs(bt.OutputDir, "html", "txt"); err != nil {
+			if err := utils.MkDirs(bt.OutputDir); err != nil {
 				bt.LogError("create dir and subdirs "+bt.OutputDir, err)
 				wb.BuildErrorWindow(mainWindow, err)
 				return
@@ -225,6 +231,9 @@ func main() {
 				return
 			}
 
+			names := []string{mainVerses.Name}
+
+			outputOption := wb.GetOutputFile()
 			// set max progress scale
 			docprogress.Max = 2 * float64((mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount()))
 
@@ -232,25 +241,33 @@ func main() {
 				progress.Max = 2
 				progresspdf.Max = float64(+len(*translationVerses))
 
-				if err := bt.WriteTextFile(mainVerses, translationVerses); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
+				switch outputOption {
+				case ui.Pdf:
+					if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
+
+					for _, translation := range *translationVerses {
+						names = append(names, translation.Name)
+					}
+
+					if err := bt.ConvertToPdf(names...); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
+				case ui.Text:
+					if err := bt.WriteTextFile(mainVerses, translationVerses); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
+				case ui.Html:
+					if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
 				}
 
-				if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
-				}
-
-				names := []string{mainVerses.Name}
-				for _, translation := range *translationVerses {
-					names = append(names, translation.Name)
-				}
-
-				if err := bt.ConvertToPdf(names...); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
-				}
 			} else {
 				//write seperate files
 				progress.Max = 1 + (float64(+len(*translationVerses)))*2
@@ -259,33 +276,50 @@ func main() {
 				// // write to file
 				names := []string{mainVerses.GetTranslationName()}
 
-				if err := bt.WriteTextFile(mainVerses, nil); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
-				}
-
-				if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
-				}
-
-				for _, t := range *translationVerses {
-					if err := bt.WriteTextFile(t, nil); err != nil {
+				switch outputOption {
+				case ui.Pdf:
+					if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
 
-					if err := bt.WriteHtmlfile(t, nil, false); err != nil {
+					for _, t := range *translationVerses {
+						if err := bt.WriteHtmlfile(t, nil, false); err != nil {
+							wb.BuildErrorWindow(mainWindow, err)
+							return
+						}
+						names = append(names, t.GetTranslationName())
+					}
+
+					if err := bt.ConvertToPdf(names...); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
 
-					names = append(names, t.GetTranslationName())
-				}
+				case ui.Text:
+					if err := bt.WriteTextFile(mainVerses, nil); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
 
-				if err := bt.ConvertToPdf(names...); err != nil {
-					wb.BuildErrorWindow(mainWindow, err)
-					return
+					for _, t := range *translationVerses {
+						if err := bt.WriteTextFile(t, nil); err != nil {
+							wb.BuildErrorWindow(mainWindow, err)
+							return
+						}
+					}
+				case ui.Html:
+					if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
+						wb.BuildErrorWindow(mainWindow, err)
+						return
+					}
+
+					for _, t := range *translationVerses {
+						if err := bt.WriteHtmlfile(t, nil, false); err != nil {
+							wb.BuildErrorWindow(mainWindow, err)
+							return
+						}
+					}
 				}
 
 				fyne.Do(func() {

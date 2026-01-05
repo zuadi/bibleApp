@@ -22,7 +22,7 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 
 	documentName := maintranslation.GetTranslationName()
 	bt.DebugLog("WriteTextFile", "write text file "+documentName)
-	f, err := os.Create(filepath.Join(bt.OutputDir, "txt", documentName+".txt"))
+	f, err := os.Create(filepath.Join(bt.OutputDir, documentName+".txt"))
 	if err != nil {
 		bt.LogError("write text file", err)
 		return err
@@ -98,7 +98,7 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 
 	bt.DebugLog("WriteHtmlfile", "write tmpl html file "+documentName)
 
-	err := bt.WriteHtml(filepath.Join(bt.OutputDir, "html", documentName+".html"), models.HtmlStruct{
+	err := bt.WriteHtml(filepath.Join(bt.OutputDir, documentName+".html"), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
 		SermonTitle:         bt.GetSermonTitle(),
 		PastorName:          bt.GetPastor(),
@@ -143,7 +143,7 @@ func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
 		for _, name := range documentNames {
 			bt.DebugLog("ConvertToPdf", "convert "+name)
 			files = append(files, pdfModels.File{
-				Input:  filepath.Join(bt.OutputDir, "html", name+".html"),
+				Input:  filepath.Join(bt.OutputDir, name+".html"),
 				Output: filepath.Join(bt.OutputDir, name+".pdf"),
 			})
 		}

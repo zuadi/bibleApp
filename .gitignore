@@ -7,3 +7,4 @@ assets
 *-wal
 .DS_Store
 *.app
+*.exe

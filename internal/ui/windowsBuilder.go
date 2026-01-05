@@ -7,6 +7,12 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+const (
+	Pdf  string = "PDF File"
+	Text string = "Text File"
+	Html string = "Html File"
+)
+
 type WindowBuilder struct {
 	GetMainTranslation func(set string)
 	mainTranslation    *widget.Select
@@ -18,6 +24,8 @@ type WindowBuilder struct {
 	sermonTitle        *widget.Entry
 	pastorName         *widget.Entry
 	Translate          func()
+	GetOutputSelect    func(set string)
+	outputSelect       *widget.Select
 	translateButton    *widget.Button
 	verseField         *widget.Entry
 	icon               fyne.Resource
@@ -64,6 +72,13 @@ func NewWindowBuilder(translations []string) *WindowBuilder {
 	// pastor name
 	wb.pastorName = widget.NewEntry()
 	wb.pastorName.PlaceHolder = "Enter Name of pastor"
+
+	// output option
+	wb.outputSelect = widget.NewSelect([]string{Pdf, Text, Html}, func(set string) {
+		if wb.GetOutputSelect != nil {
+			wb.GetOutputSelect(set)
+		}
+	})
 
 	//translate button
 	wb.translateButton = widget.NewButton("Translate", func() {
@@ -114,6 +129,18 @@ func (wb *WindowBuilder) SetPastorName(value string) {
 
 func (wb *WindowBuilder) GetPastorName() string {
 	return wb.pastorName.Text
+}
+
+func (wb *WindowBuilder) SetOutputFile(value string) {
+	if value == "" {
+		wb.outputSelect.SetSelectedIndex(0)
+		return
+	}
+	wb.outputSelect.SetSelected(value)
+}
+
+func (wb *WindowBuilder) GetOutputFile() string {
+	return wb.outputSelect.Selected
 }
 
 func (wb *WindowBuilder) SetVerseEntries(value string) {
@@ -169,11 +196,11 @@ func (wb *WindowBuilder) BuildMainWindow(a fyne.App, appName string) fyne.Window
 					// set 2nd column translation checkboxes
 					container.NewVScroll(wb.translations),
 					// set 3rd column with sermon title, pastor name and translate button
-					container.NewVBox(container.NewGridWithRows(6,
+					container.NewVBox(container.NewGridWithRows(7,
 						widget.NewLabel("Sermontitle:"),
 						wb.sermonTitle,
 						widget.NewLabel("Name of Pastor:"),
-						wb.pastorName),
+						wb.pastorName, widget.NewLabel("Output:"), wb.outputSelect),
 						wb.translateButton,
 					),
 				),

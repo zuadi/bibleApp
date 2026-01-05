@@ -28,6 +28,25 @@ func MkDirs(root string, subfolder ...string) error {
 	return nil
 }
 
+func RemoveAllFileExtenetions(root, fileExtention string) error {
+	files, err := os.ReadDir(root)
+	if err != nil {
+		return err
+	}
+
+	for _, f := range files {
+		if f.IsDir() || filepath.Ext(f.Name()) != fileExtention {
+			continue
+		}
+		err := os.Remove(filepath.Join(root, f.Name()))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func GetDistOsPath(path string) string {
 	if runtime.GOOS == "darwin" {
 		exe, _ := os.Executable()

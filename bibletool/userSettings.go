@@ -123,6 +123,16 @@ func (bt *Bibletool) GetSermonTitle() string {
 	return strings.TrimSpace(bt.config.SermonTitle)
 }
 
+func (bt *Bibletool) SetOutputFile(s string) {
+	bt.DebugLog("SetOutputFile", s)
+	bt.config.OutputFile = s
+}
+
+func (bt *Bibletool) GetOutputFile() string {
+	bt.DebugLog("GetOutputFile", bt.config.OutputFile)
+	return strings.TrimSpace(bt.config.OutputFile)
+}
+
 func (bt *Bibletool) SetVerses(s string) {
 	bt.DebugLog("SetVerses", s)
 	bt.config.Verses = s
