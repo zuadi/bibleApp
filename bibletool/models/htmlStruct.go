@@ -9,7 +9,7 @@ type HtmlStruct struct {
 	MainTranslation     *Translation
 	Translations        *Translations
 	Date                string
-	IconPath            template.URL
+	IconBase64          template.URL
 	ProgressFnc         func(title string, progress float64)
 	RightToLeftDocument bool
 	SameDocument        bool

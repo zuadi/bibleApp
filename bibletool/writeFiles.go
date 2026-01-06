@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"gitea.tecamino.com/paadi/html2pdf"
-	"gitea.tecamino.com/paadi/html2pdf/converter"
-	pdfModels "gitea.tecamino.com/paadi/html2pdf/models"
+	html2pdfModel "gitea.tecamino.com/paadi/html2pdf/models"
 	"gitea.tecamino.com/paadi/pdfmerge"
+	templatebuilder "gitea.tecamino.com/paadi/template-builder"
 )
 
 func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translations *models.Translations) error {
@@ -93,12 +93,17 @@ func (bt *Bibletool) WriteTextFile(maintranslation *models.Translation, translat
 	return err
 }
 
-func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) error {
+func (bt *Bibletool) WriteHtmlFile(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) error {
 	documentName := maintranslation.GetTranslationName()
 
 	bt.DebugLog("WriteHtmlfile", "write tmpl html file "+documentName)
 
-	err := bt.WriteHtml(filepath.Join(bt.OutputDir, documentName+".html"), models.HtmlStruct{
+	iconBase64, err := utils.ImageToBase64(bt.AbsIconPath)
+	if err != nil {
+		return err
+	}
+
+	err = bt.WriteHtml(bt.getHtmlPath(documentName), models.HtmlStruct{
 		Name:                "Main " + maintranslation.Name,
 		SermonTitle:         bt.GetSermonTitle(),
 		PastorName:          bt.GetPastor(),
@@ -106,7 +111,7 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 		MainTranslation:     maintranslation,
 		Translations:        translations,
 		Date:                time.Now().Format("02-January-2006"),
-		IconPath:            template.URL(filepath.ToSlash(bt.AbsIconPath)),
+		IconBase64:          template.URL(iconBase64),
 		ProgressFnc:         bt.DocumentProgress,
 		SameDocument:        sameDocument,
 	})
@@ -118,42 +123,53 @@ func (bt *Bibletool) WriteHtmlfile(maintranslation *models.Translation, translat
 	return nil
 }
 
-func (bt *Bibletool) ConvertToPdf(documentNames ...string) error {
-	var err error
-	var c *converter.Converter
-	//chrome limiter
-	var chromeLimiter = make(chan struct{}, 2)
-
+func (bt *Bibletool) WritePdfFiles(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) (err error) {
+	pdfProgress = 0
 	chromePath := utils.GetDistOsPath(env.ChromePath.GetValue())
-	bt.DebugLog("ConvertToPdf", "open chrome headless shell from "+chromePath)
-	bt.Wg.Go(func() {
+	bt.DebugLog("WritePdfFiles", "open chrome headless shell from "+chromePath)
+	bt.pdfConverter, err = html2pdf.NewConverterInstance(chromePath)
+	if err != nil {
+		return err
+	}
+	bt.pdfConverter.SetProgressCallback(bt.PdfProgressAdd)
 
-		chromeLimiter <- struct{}{}
-		defer func() { <-chromeLimiter }()
+	sameDocTranslation := translations
+	if !sameDocument {
+		sameDocTranslation = nil
+	}
 
-		c, err = html2pdf.NewConverterInstance(chromePath)
-		if err != nil {
-			bt.LogError("html2pdf", err)
-		}
-		defer c.Close()
+	html, err := bt.getHtmlData(maintranslation, sameDocTranslation, sameDocument)
+	if err != nil {
+		return err
+	}
 
-		c.SetProgressCallback(bt.PdfProgressAdd)
-
-		var files []pdfModels.File
-		for _, name := range documentNames {
-			bt.DebugLog("ConvertToPdf", "convert "+name)
-			files = append(files, pdfModels.File{
-				Input:  filepath.Join(bt.OutputDir, name+".html"),
-				Output: filepath.Join(bt.OutputDir, name+".pdf"),
-			})
-		}
-
-		err = c.Convert(files...)
-		if err != nil {
-			bt.LogError("html2pdf", err)
-		}
+	err = bt.pdfConverter.ConvertHtmls(html2pdfModel.Html{
+		Html:   html,
+		Output: bt.getPdfPath(maintranslation.GetTranslationName()),
 	})
-	return err
+	if err != nil {
+		return err
+	}
+
+	if sameDocument {
+		return nil
+	}
+	for _, t := range *translations {
+		bt.Wg.Go(func() {
+			html, err := bt.getHtmlData(t, nil, false)
+			if err != nil {
+				bt.LogError("html2pdf", err)
+			}
+			err = bt.pdfConverter.ConvertHtmls(html2pdfModel.Html{
+				Html:   html,
+				Output: bt.getPdfPath(t.GetTranslationName()),
+			})
+			if err != nil {
+				bt.LogError("html2pdf", err)
+			}
+		})
+	}
+	return nil
 }
 
 func (bt *Bibletool) CombinePDF() error {
@@ -181,4 +197,32 @@ func (bt *Bibletool) CombinePDF() error {
 		bt.LogError("combine pdf", err)
 	}
 	return err
+}
+
+func (bt *Bibletool) getHtmlData(maintranslation *models.Translation, translations *models.Translations, sameDocument bool) (data []byte, err error) {
+	bt.DebugLog("GetHtmlData", "start template builder")
+	tmplBuilder := templatebuilder.NewTemplateBuilder()
+
+	iconBase64, err := utils.ImageToBase64(bt.AbsIconPath)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err = tmplBuilder.Generate(utils.GetDistOsPath(env.HtmlTemplateFile.GetValue()), &models.HtmlStruct{
+		Name:                "Main " + maintranslation.Name,
+		SermonTitle:         bt.GetSermonTitle(),
+		PastorName:          bt.GetPastor(),
+		RightToLeftDocument: maintranslation.RightToLeft,
+		MainTranslation:     maintranslation,
+		Translations:        translations,
+		Date:                time.Now().Format("02-January-2006"),
+		IconBase64:          template.URL(iconBase64),
+		ProgressFnc:         bt.DocumentProgress,
+		SameDocument:        sameDocument,
+	})
+	bt.TotalProgressAdd(1)
+	if err != nil {
+		bt.LogError("htmlbuilder", err)
+	}
+	return
 }
