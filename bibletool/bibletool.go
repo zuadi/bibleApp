@@ -3,7 +3,6 @@ package bibletool
 import (
 	"bibletool/bibletool/env"
 	"bibletool/bibletool/models"
-	"bibletool/internal/ui"
 	"bibletool/utils"
 	"encoding/csv"
 	"fmt"
@@ -13,6 +12,7 @@ import (
 	"strings"
 	"sync"
 
+	"gitea.tecamino.com/paadi/html2pdf/converter"
 	"gitea.tecamino.com/paadi/tecamino-logger/logging"
 	"github.com/skratchdot/open-golang/open"
 )
@@ -29,6 +29,7 @@ type Bibletool struct {
 	TotalProgress    func(process float64)
 	DocumentProgress func(title string, process float64)
 	PdfProgress      func(process float64)
+	pdfConverter     *converter.Converter
 }
 
 func NewBibletool() (bt *Bibletool, err error) {
@@ -112,11 +113,7 @@ func (bt *Bibletool) GetAllTranslations() (list []string, err error) {
 }
 
 func (bt *Bibletool) Close() error {
-	if bt.GetOutputFile() == ui.Pdf {
-		bt.DebugLog("Close", "remove html files ")
-		utils.RemoveAllFileExtenetions(bt.OutputDir, ".html")
-	}
-
+	bt.pdfConverter.Close()
 	bt.DebugLog("Close", "open file explorer "+bt.OutputDir)
 	// open file browser of translation
 	if err := open.Run(bt.OutputDir); err != nil {
@@ -144,8 +141,19 @@ func (bt *Bibletool) DocumentProgressAdd(title string, add int) {
 	}
 }
 
+var pdfProgress int
+
 func (bt *Bibletool) PdfProgressAdd(add int) {
 	if bt.PdfProgress != nil {
-		bt.PdfProgress(float64(add))
+		pdfProgress += add
+		bt.PdfProgress(float64(pdfProgress))
 	}
+}
+
+func (bt *Bibletool) getHtmlPath(documentName string) string {
+	return filepath.Join(bt.OutputDir, documentName+".html")
+}
+
+func (bt *Bibletool) getPdfPath(documentName string) string {
+	return filepath.Join(bt.OutputDir, documentName+".pdf")
 }
