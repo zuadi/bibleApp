@@ -13,7 +13,7 @@ func (bt *Bibletool) WriteHtml(outputPath string, data models.HtmlStruct) error 
 	tmplBuilder := templatebuilder.NewTemplateBuilder()
 
 	path := utils.GetDistOsPath(env.HtmlTemplateFile.GetValue())
-	err := tmplBuilder.Generate(path, outputPath, &data)
+	err := tmplBuilder.GenerateFile(path, outputPath, &data)
 	if err != nil {
 		return err
 	}

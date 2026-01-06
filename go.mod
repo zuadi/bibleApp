@@ -4,10 +4,10 @@ go 1.25.4
 
 require (
 	fyne.io/fyne/v2 v2.7.1
-	gitea.tecamino.com/paadi/html2pdf v0.0.13
+	gitea.tecamino.com/paadi/html2pdf v0.0.17
 	gitea.tecamino.com/paadi/pdfmerge v0.0.4
 	gitea.tecamino.com/paadi/tecamino-logger v1.0.0
-	gitea.tecamino.com/paadi/template-builder v0.0.3
+	gitea.tecamino.com/paadi/template-builder v0.0.4
 	github.com/joho/godotenv v1.5.1
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	modernc.org/sqlite v1.41.0

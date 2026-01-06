@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 func MkDirs(root string, subfolder ...string) error {
@@ -28,23 +30,25 @@ func MkDirs(root string, subfolder ...string) error {
 	return nil
 }
 
-func RemoveAllFileExtenetions(root, fileExtention string) error {
-	files, err := os.ReadDir(root)
+func ImageToBase64(path string) (string, error) {
+	imgBytes, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	for _, f := range files {
-		if f.IsDir() || filepath.Ext(f.Name()) != fileExtention {
-			continue
-		}
-		err := os.Remove(filepath.Join(root, f.Name()))
-		if err != nil {
-			return err
-		}
+	ext := strings.ToLower(filepath.Ext(path))
+	var mime string
+	switch ext {
+	case ".png":
+		mime = "image/png"
+	case ".jpg", ".jpeg":
+		mime = "image/jpeg"
+	case ".gif":
+		mime = "image/gif"
+	default:
+		return "", fmt.Errorf("unsupported image type: %s", ext)
 	}
-
-	return nil
+	return "data:" + mime + ";base64," + base64.StdEncoding.EncodeToString(imgBytes), nil
 }
 
 func GetDistOsPath(path string) string {

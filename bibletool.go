@@ -20,7 +20,6 @@ func main() {
 	// This function is a bibletranslation help that there can be a main translation choosen and the desired verses entered.
 	// it will create a txt and pdf file of each translation or a combined file with all translation.
 	// it checks if verse exists in main translation and if not give out the not found verses
-
 	bt, err := bibletool.NewBibletool()
 	if err != nil {
 		panic(err)
@@ -231,28 +230,18 @@ func main() {
 				return
 			}
 
-			names := []string{mainVerses.Name}
-
 			outputOption := wb.GetOutputFile()
 			// set max progress scale
-			docprogress.Max = 2 * float64((mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount()))
+			docprogress.Max = float64((mainVerses.GetVerseAmount() + translationVerses.GetVerseAmount()))
+			progresspdf.Max = float64(+len(*translationVerses))
+			progress.Max = (float64(+len(*translationVerses)))
 
 			if bt.GetSameDocument() {
 				progress.Max = 2
-				progresspdf.Max = float64(+len(*translationVerses))
 
 				switch outputOption {
 				case ui.Pdf:
-					if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
-						wb.BuildErrorWindow(mainWindow, err)
-						return
-					}
-
-					for _, translation := range *translationVerses {
-						names = append(names, translation.Name)
-					}
-
-					if err := bt.ConvertToPdf(names...); err != nil {
+					if err := bt.WritePdfFiles(mainVerses, translationVerses, true); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
@@ -261,41 +250,21 @@ func main() {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
+
 				case ui.Html:
-					if err := bt.WriteHtmlfile(mainVerses, translationVerses, true); err != nil {
+					if err := bt.WriteHtmlFile(mainVerses, translationVerses, true); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
 				}
 
 			} else {
-				//write seperate files
-				progress.Max = 1 + (float64(+len(*translationVerses)))*2
-				progresspdf.Max = float64(+len(*translationVerses))
-
-				// // write to file
-				names := []string{mainVerses.GetTranslationName()}
-
 				switch outputOption {
 				case ui.Pdf:
-					if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
+					if err := bt.WritePdfFiles(mainVerses, translationVerses, false); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
-
-					for _, t := range *translationVerses {
-						if err := bt.WriteHtmlfile(t, nil, false); err != nil {
-							wb.BuildErrorWindow(mainWindow, err)
-							return
-						}
-						names = append(names, t.GetTranslationName())
-					}
-
-					if err := bt.ConvertToPdf(names...); err != nil {
-						wb.BuildErrorWindow(mainWindow, err)
-						return
-					}
-
 				case ui.Text:
 					if err := bt.WriteTextFile(mainVerses, nil); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
@@ -309,13 +278,13 @@ func main() {
 						}
 					}
 				case ui.Html:
-					if err := bt.WriteHtmlfile(mainVerses, nil, false); err != nil {
+					if err := bt.WriteHtmlFile(mainVerses, nil, false); err != nil {
 						wb.BuildErrorWindow(mainWindow, err)
 						return
 					}
 
 					for _, t := range *translationVerses {
-						if err := bt.WriteHtmlfile(t, nil, false); err != nil {
+						if err := bt.WriteHtmlFile(t, nil, false); err != nil {
 							wb.BuildErrorWindow(mainWindow, err)
 							return
 						}

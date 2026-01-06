@@ -30,6 +30,8 @@ type WindowBuilder struct {
 	translateButton    *widget.Button
 	verseField         *widget.Entry
 	icon               fyne.Resource
+	mainProgressWindow *fyne.Window
+	pdfProgressWindow  *fyne.Window
 }
 
 func NewWindowBuilder(translations []string) *WindowBuilder {
@@ -230,6 +232,7 @@ func (wb *WindowBuilder) BuildMainProgressWindow(a fyne.App, appName string, con
 			container.NewVBox(content...),
 		),
 	)
+	wb.mainProgressWindow = &w
 	return w
 }
 
@@ -238,6 +241,7 @@ func (wb *WindowBuilder) BuildPdfProgressWindow(a fyne.App, appName string) fyne
 	w.SetIcon(wb.icon)
 	w.Resize(fyne.NewSize(200, 100))
 	w.CenterOnScreen()
+	wb.pdfProgressWindow = &w
 	return w
 }
 
@@ -245,4 +249,9 @@ func (wb *WindowBuilder) BuildErrorWindow(w fyne.Window, err error) {
 	d := dialog.NewError(err, w)
 	d.Resize(fyne.Size{Width: 200, Height: 200})
 	d.Show()
+	fyne.Do(func() {
+		(*wb.mainProgressWindow).Close()
+		(*wb.pdfProgressWindow).Close()
+	})
+
 }
